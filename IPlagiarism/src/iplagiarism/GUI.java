@@ -10,7 +10,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class GUI {
     private static JFrame mainFrame;
     private static JTextField path0;
-    private JTextField path1;
+    private static JTextField path1;
     private JPanel panelFile1;
     private JPanel panelFile2;
     private JButton check;
@@ -28,6 +28,7 @@ public class GUI {
         mainFrame.setSize(400, 400);
         mainFrame.setLayout(new BorderLayout());
         mainFrame.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent windowEvent) {
                 System.exit(0);
             }
@@ -48,8 +49,6 @@ public class GUI {
     
     public void Display()
     {
-        
-
         JButton selectButton0 = new JButton("Select");
         JButton selectButton1 = new JButton("Select");
         
@@ -58,6 +57,9 @@ public class GUI {
         
         EventSb1 esb1 = new EventSb1();
         selectButton1.addActionListener(esb1);
+        
+        EventCB ecb = new EventCB();
+        check.addActionListener(ecb);
         
         panelFile1.add(path0);
         panelFile1.add(selectButton0);
@@ -85,6 +87,15 @@ public class GUI {
                 }
         
         return path;
+    }
+    
+    class EventCB implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            
+        }
+        
     }
     
     class EventSb0 implements ActionListener {

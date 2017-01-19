@@ -9,7 +9,6 @@ public class IPlagiarism {
         public void run() {
             GUI gui = new GUI();
             gui.Display();
-            
         }
         });
     }
