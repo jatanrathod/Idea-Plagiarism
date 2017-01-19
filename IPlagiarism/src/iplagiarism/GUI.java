@@ -93,7 +93,9 @@ public class GUI {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            (new checkPlagiarism()).execute();
+            String filePath0 = path0.getText();
+            String filePath1 = path1.getText();
+            (new checkPlagiarism(filePath0, filePath1)).execute();
         }
         
     }
