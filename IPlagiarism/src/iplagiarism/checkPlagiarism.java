@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 import javax.swing.SwingWorker;
+import java.util.Objects;
+import org.apache.commons.io.FileUtils;
 
 /**
  *
@@ -33,7 +35,16 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
 
     @Override
     protected Void doInBackground() throws Exception {
-        System.out.println(filePath0);
+        String f1 = readFile(filePath0);
+        String f2 = readFile(filePath1);
         return null;
+    }
+
+    private String readFile(String path) throws IOException {
+        String result = null;
+        File file = new File(path);
+        StringBuilder sb = new StringBuilder();
+        result = FileUtils.readFileToString(file, "UTF-8");
+        return result;
     }
 }
