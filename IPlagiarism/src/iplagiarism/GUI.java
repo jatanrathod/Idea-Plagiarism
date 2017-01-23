@@ -95,7 +95,11 @@ public class GUI {
         public void actionPerformed(ActionEvent e) {
             String filePath0 = path0.getText();
             String filePath1 = path1.getText();
+            if(filePath0.isEmpty() || filePath1.isEmpty()){
+                JOptionPane.showMessageDialog(null, "Please select two files to check Plagiarism!!");
+            }else{
             (new checkPlagiarism(filePath0, filePath1)).execute();
+            }
         }
         
     }

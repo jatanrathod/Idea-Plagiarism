@@ -33,6 +33,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
 
     @Override
     protected Void doInBackground() throws Exception {
+        System.out.println(filePath0);
         return null;
     }
 }
