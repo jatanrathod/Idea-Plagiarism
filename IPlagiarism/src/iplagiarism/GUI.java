@@ -82,10 +82,7 @@ public class GUI {
                     } else {
                         JOptionPane.showMessageDialog(null, "Choose Text Documents only");
                     }
-                } else {
-                    path0.setText("Open command cancelled by user.");
                 }
-        
         return path;
     }
     
