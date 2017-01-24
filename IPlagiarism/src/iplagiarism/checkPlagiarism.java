@@ -7,8 +7,6 @@ package iplagiarism;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import javax.swing.SwingWorker;
 import org.apache.commons.io.FileUtils;
 
@@ -51,8 +49,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         String result = null;
         int rand = 500 + (int)(Math.random() * 1500);
         this.randomNum = " "+String.valueOf(rand)+" ";
-        result = contents.replace(".", randomNum).replace(",", randomNum).replace("?", randomNum).replace("<", randomNum).replace(">", randomNum);
-        System.out.println(result);
+        result = contents.replace(".", randomNum).replace(",", randomNum).replace("?", randomNum).replace("!", randomNum).replace("@", randomNum);
         return result;
     }
 }
