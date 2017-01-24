@@ -33,7 +33,6 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     private String readFile(String path) throws IOException {
         String result = null;
         File file = new File(path);
-        StringBuilder sb = new StringBuilder();
         result = FileUtils.readFileToString(file, "UTF-8");
         return result;
     }
