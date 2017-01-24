@@ -7,6 +7,9 @@ package iplagiarism;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javax.swing.SwingWorker;
 import org.apache.commons.io.FileUtils;
 
@@ -41,7 +44,14 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     }
 
     private String splitLines(String contents) {
-        String result = replaceRegex(contents);
+        String result = null;
+        contents = replaceRegex(contents);
+        String[] lines = contents.split(randomNum);
+        List<String> lineList = new ArrayList<String>(Arrays.asList(lines));
+        // For testing....
+        for(String s : lineList){
+            System.out.println(s);
+        }
         return result;
     }
 
