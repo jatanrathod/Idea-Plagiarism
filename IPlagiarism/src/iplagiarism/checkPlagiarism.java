@@ -33,9 +33,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         String f1 = readFile(filePath0);
         String f2 = readFile(filePath1);
         ArrayList<String> file1 = splitLines(f1);
-        System.out.println(file1.get(0));
         ArrayList<String> file2 = splitLines(f2);
-        System.out.println(file1.get(0));
         return null;
     }
 
