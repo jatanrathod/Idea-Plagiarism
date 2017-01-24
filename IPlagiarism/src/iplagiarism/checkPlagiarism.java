@@ -20,6 +20,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
 
     String filePath0;
     String filePath1;
+    String randomNum;
     checkPlagiarism(String filePath0, String filePath1) {
         this.filePath0 = filePath0;
         this.filePath1 = filePath1;
@@ -48,7 +49,10 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
 
     private String replaceRegex(String contents) {
         String result = null;
-        
+        int rand = 500 + (int)(Math.random() * 1500);
+        this.randomNum = " "+String.valueOf(rand)+" ";
+        result = contents.replace(".", randomNum).replace(",", randomNum).replace("?", randomNum).replace("<", randomNum).replace(">", randomNum);
+        System.out.println(result);
         return result;
     }
 }
