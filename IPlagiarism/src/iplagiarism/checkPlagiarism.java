@@ -47,9 +47,13 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
 
     private String replaceRegex(String contents) {
         String result = null;
-        int rand = 500 + (int)(Math.random() * 1500);
+        int rand = 3000 + (int)(Math.random() * 6000);
         this.randomNum = " "+String.valueOf(rand)+" ";
-        result = contents.replace(".", randomNum).replace(",", randomNum).replace("?", randomNum).replace("!", randomNum).replace("@", randomNum);
+        result = contents.replace(".", randomNum)
+                .replace(",", randomNum)
+                .replace("?", randomNum)
+                .replace("!", randomNum)
+                .replace("@", randomNum);
         return result;
     }
 }
