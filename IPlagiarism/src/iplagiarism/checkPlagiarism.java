@@ -22,6 +22,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     String filePath0;
     String filePath1;
     String randomNum;
+    ArrayList<String> lineList;
     checkPlagiarism(String filePath0, String filePath1) {
         this.filePath0 = filePath0;
         this.filePath1 = filePath1;
@@ -31,8 +32,10 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     protected Void doInBackground() throws Exception {
         String f1 = readFile(filePath0);
         String f2 = readFile(filePath1);
-        String file1 = splitLines(f1);
-        String file2 = splitLines(f2);
+        ArrayList<String> file1 = splitLines(f1);
+        System.out.println(file1.get(0));
+        ArrayList<String> file2 = splitLines(f2);
+        System.out.println(file1.get(0));
         return null;
     }
 
@@ -43,16 +46,11 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         return contents;
     }
 
-    private String splitLines(String contents) {
-        String result = null;
+    private ArrayList<String> splitLines(String contents) {
         contents = replaceRegex(contents);
         String[] lines = contents.split(randomNum);
-        List<String> lineList = new ArrayList<String>(Arrays.asList(lines));
-        // For testing....
-        for(String s : lineList){
-            System.out.println(s);
-        }
-        return result;
+        lineList = new ArrayList<String>(Arrays.asList(lines));
+        return lineList;
     }
 
     private String replaceRegex(String contents) {
