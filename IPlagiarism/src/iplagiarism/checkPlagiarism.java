@@ -7,6 +7,8 @@ package iplagiarism;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import javax.swing.SwingWorker;
 import org.apache.commons.io.FileUtils;
 
@@ -27,13 +29,26 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     protected Void doInBackground() throws Exception {
         String f1 = readFile(filePath0);
         String f2 = readFile(filePath1);
+        String file1 = splitLines(f1);
+        String file2 = splitLines(f2);
         return null;
     }
 
     private String readFile(String path) throws IOException {
-        String result = null;
+        String contents = null;
         File file = new File(path);
-        result = FileUtils.readFileToString(file, "UTF-8");
+        contents = FileUtils.readFileToString(file, "UTF-8");
+        return contents;
+    }
+
+    private String splitLines(String contents) {
+        String result = replaceRegex(contents);
+        return result;
+    }
+
+    private String replaceRegex(String contents) {
+        String result = null;
+        
         return result;
     }
 }
