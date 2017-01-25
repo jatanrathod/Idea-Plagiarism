@@ -60,7 +60,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         String result = null;
         int rand = 3000 + (int)(Math.random() * 6000);
         this.randomNum = " "+String.valueOf(rand)+" ";
-        result = contents.replaceAll("\\s*[^\\w\\s]\\s*", randomNum);
+        result = contents.replaceAll("\\.", randomNum);
         return result;
     }
 }
