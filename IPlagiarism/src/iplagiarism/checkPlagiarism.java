@@ -33,6 +33,11 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         String f1 = readFile(filePath0);
         String f2 = readFile(filePath1);
         ArrayList<String> file1 = splitLines(f1);
+        int length = file1.size();
+        System.out.println("size "+ length);
+        for(String s : file1){
+            System.out.println(s);
+        }
         ArrayList<String> file2 = splitLines(f2);
         return null;
     }
@@ -55,11 +60,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         String result = null;
         int rand = 3000 + (int)(Math.random() * 6000);
         this.randomNum = " "+String.valueOf(rand)+" ";
-        result = contents.replace(".", randomNum)
-                .replace(",", randomNum)
-                .replace("?", randomNum)
-                .replace("!", randomNum)
-                .replace("@", randomNum);
+        result = contents.replaceAll("\\s*[^\\w\\s]\\s*", randomNum);
         return result;
     }
 }
