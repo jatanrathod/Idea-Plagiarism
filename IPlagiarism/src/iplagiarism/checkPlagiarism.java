@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import javax.swing.SwingWorker;
 import org.apache.commons.io.FileUtils;
 
@@ -22,7 +21,6 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     String filePath0;
     String filePath1;
     String randomNum;
-    ArrayList<String> lineList;
     checkPlagiarism(String filePath0, String filePath1) {
         this.filePath0 = filePath0;
         this.filePath1 = filePath1;
@@ -52,7 +50,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     private ArrayList<String> splitLines(String contents) {
         contents = replaceRegex(contents);
         String[] lines = contents.split(randomNum);
-        lineList = new ArrayList<String>(Arrays.asList(lines));
+        ArrayList<String> lineList = new ArrayList<String>(Arrays.asList(lines));
         return lineList;
     }
 
