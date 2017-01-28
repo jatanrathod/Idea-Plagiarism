@@ -9,12 +9,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
+import java.util.Scanner;
 import javax.swing.SwingWorker;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.*;
-import org.apache.commons.lang.ArrayUtils;
 
 /**
  *
@@ -27,9 +30,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     String randomNum;
     ArrayList<String> file1;
     ArrayList<String> file2;
-    LinkedList<ArrayList<String>> treeFile1;
-    LinkedList<ArrayList<String>> treeFile2;
-    private static final String[] common = {"a", "an", "the", "it", "on", "and", "of", "for", "then", "than", "upto", "be", "is", "i", "to", "and", "in", "that", "have",
+    String[] common = {"a", "an", "the", "it", "on", "and", "of", "for", "then", "than", "upto", "be", "is", "i", "to", "and", "in", "that", "have",
         "not", "on", "with", "he", "she", "as", "you", "do", "at", "this", "but", "his", "by", "from", "they", "we", "say", "her", "him", "or", "will",
         "my", "all", "would", "could", "there", "their", "what", "when", "why", "who", "how", "so", "up", "down", "if", "out", "in", "about", "get", "which",
         "go", "me", "make", "can", "like", "know", "time", "knew", "just", "put", "take", "took", "into", "your", "some", "them", "see", "other", "now",
@@ -47,8 +48,8 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         String f2 = readFile(filePath1);
         file1 = splitLines(f1);
         file2 = splitLines(f2);
-        treeFile1 = removeCommonWords(file1);
-        //treeFile2 = removeCommonWords(file2);
+        file1 = extractMainWords(file1);
+        //file2 = extractMainWords(file2);
         return null;
     }
 
@@ -74,24 +75,18 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         return result;
     }
 
-    private LinkedList<ArrayList<String>> removeCommonWords(ArrayList<String> file) {
-        LinkedList<ArrayList<String>> result = null;
+    private ArrayList<String> extractMainWords(ArrayList<String> file) {
+        ArrayList<String> result = null;
+        String str = null;
+        List<String> commonWords = new ArrayList<>(Arrays.asList(common));
         ListIterator<String> iterator = file.listIterator();
         while (iterator.hasNext()) {
-            iterator.set(iterator.next().replaceAll("\\s*[^\\w\\s]\\s*", "").toLowerCase());
-        }
-        LinkedList<ArrayList<String>> treeFile = new LinkedList<>();
-        for (int i = 0; i < file.size(); i++) {
-            String[] tArray = file.get(i).split(" ");
-            ArrayList<String> list = new ArrayList<String>(Arrays.asList(tArray));
-            treeFile.add(list);
+            iterator.set(iterator.next().replaceAll("[^0-9][.,]|[.,][^0-9]|(?![.,])\\p{Punct}", "").toLowerCase());
         }
         
-        for (int i = 0; i < treeFile.size(); i++) {
-            System.out.println("Linked List " + i);
-            for (int j = 0; j < treeFile.get(i).size(); j++) {
-                System.out.println(j + " " + treeFile.get(i).get(j));
-            }
+        for(int i=0; i<file.size(); i++) 
+        {
+            System.out.println(i+" : "+file.get(i));
         }
         return result;
     }
