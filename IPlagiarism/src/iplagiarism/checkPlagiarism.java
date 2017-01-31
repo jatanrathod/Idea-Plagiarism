@@ -9,14 +9,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Scanner;
 import javax.swing.SwingWorker;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.ListUtils;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -28,9 +24,15 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     String filePath0;
     String filePath1;
     String randomNum;
-    ArrayList<String> file1;
-    ArrayList<String> file2;
-    String[] common = {"a", "an", "the", "it", "on", "and", "of", "for", "then", "than", "upto", "be", "is", "i", "to", "and", "in", "that", "have",
+    String s3file1;
+    String[] words;
+    ArrayList<String> s2file1;
+    ArrayList<String> s2file2;
+    ArrayList<String> s1File1;
+    ArrayList<String> s1File2;
+    HashMap<String, ArrayList<String>> synonyms = null;
+    ArrayList<String> synonymList = null;
+    String[] common = {"a", "are", "an", "the", "has", "it", "on", "and", "of", "for", "then", "than", "upto", "be", "is", "i", "to", "and", "in", "that", "have",
         "not", "on", "with", "he", "she", "as", "you", "do", "at", "this", "but", "his", "by", "from", "they", "we", "say", "her", "him", "or", "will",
         "my", "all", "would", "could", "there", "their", "what", "when", "why", "who", "how", "so", "up", "down", "if", "out", "in", "about", "get", "which",
         "go", "me", "make", "can", "like", "know", "time", "knew", "just", "put", "take", "took", "into", "your", "some", "them", "see", "other", "now",
@@ -45,11 +47,22 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     @Override
     protected Void doInBackground() throws Exception {
         String f1 = readFile(filePath0);
-        String f2 = readFile(filePath1);
-        file1 = splitLines(f1);
-        file2 = splitLines(f2);
-        file1 = extractMainWords(file1);
-        //file2 = extractMainWords(file2);
+        //String f2 = readFile(filePath1);
+        s1File1 = splitLines(f1);
+        //s1File2 = splitLines(f2);
+        s2file1 = extractMainWords(s1File1);
+        s3file1 = singleString(s2file1);
+        String[] words1 = s3file1.split(" ");
+        for (int i = 0; i < words1.length; i++) {
+            System.out.println(words1[i]);
+        }
+        //s2file2 = extractMainWords(s1File2);
+        Thesaurus thesaurus = new Thesaurus(words1);
+        try {
+            synonyms = thesaurus.getSynonyms();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
@@ -81,13 +94,41 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         List<String> commonWords = new ArrayList<>(Arrays.asList(common));
         ListIterator<String> iterator = file.listIterator();
         while (iterator.hasNext()) {
-            iterator.set(iterator.next().replaceAll("[^0-9][.,]|[.,][^0-9]|(?![.,])\\p{Punct}", "").toLowerCase());
+            iterator.set(iterator.next()
+                    .replaceAll("[^0-9][.,]|[.,][^0-9]|(?![.,])\\p{Punct}", "")
+                    .replace("\n", "")
+                    .replace("\r", "")
+                    .replaceAll("\\s+", " ")
+                    .toLowerCase());
         }
-        
-        for(int i=0; i<file.size(); i++) 
-        {
-            System.out.println(i+" : "+file.get(i));
+        for (int k = 0; k < file.size(); k++) {
+            String[] words = file.get(k).split(" ");
+            ArrayList<String> wordsList = new ArrayList<>(Arrays.asList(words));
+            for (int i = 0; i < wordsList.size(); i++) {
+                for (int j = 0; j < common.length; j++) {
+                    if (wordsList.contains(common[j])) {
+                        wordsList.remove(common[j]);
+                    }
+                }
+            }
+            StringBuilder sb = new StringBuilder();
+            for (String s : wordsList) {
+                sb.append(s);
+                sb.append(" ");
+            }
+            file.set(k, sb.toString());
         }
+        return file;
+    }
+
+    private String singleString(ArrayList<String> list) {
+        StringBuilder sb = new StringBuilder();
+            for (String s : list) {
+                sb.append(s);
+                sb.append(" ");
+            }
+            String result = sb.toString();
+            result = result.replaceAll("\\s+", " ");
         return result;
     }
 }
