@@ -32,7 +32,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     ArrayList<String> s1File2;
     HashMap<String, ArrayList<String>> synonyms = null;
     ArrayList<String> synonymList = null;
-    String[] common = {"a", "are", "an", "the", "it", "on", "and", "of", "for", "then", "than", "upto", "be", "is", "i", "to", "and", "in", "that", "have",
+    String[] common = {"a", "are", "an", "the", "has", "it", "on", "and", "of", "for", "then", "than", "upto", "be", "is", "i", "to", "and", "in", "that", "have",
         "not", "on", "with", "he", "she", "as", "you", "do", "at", "this", "but", "his", "by", "from", "they", "we", "say", "her", "him", "or", "will",
         "my", "all", "would", "could", "there", "their", "what", "when", "why", "who", "how", "so", "up", "down", "if", "out", "in", "about", "get", "which",
         "go", "me", "make", "can", "like", "know", "time", "knew", "just", "put", "take", "took", "into", "your", "some", "them", "see", "other", "now",
@@ -53,21 +53,15 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         s2file1 = extractMainWords(s1File1);
         s3file1 = singleString(s2file1);
         String[] words1 = s3file1.split(" ");
+        for (int i = 0; i < words1.length; i++) {
+            System.out.println(words1[i]);
+        }
         //s2file2 = extractMainWords(s1File2);
         Thesaurus thesaurus = new Thesaurus(words1);
         try {
             synonyms = thesaurus.getSynonyms();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        System.out.println("Synonyms : ");
-        int i=0;
-        for (String word : words) {
-            synonymList = synonyms.get(word);
-            System.out.println(i++);
-            synonymList.forEach((String my) -> {
-                System.out.println(word + " : " + my);
-            });
         }
         return null;
     }
@@ -135,6 +129,6 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
             }
             String result = sb.toString();
             result = result.replaceAll("\\s+", " ");
-        return null;
+        return result;
     }
 }
