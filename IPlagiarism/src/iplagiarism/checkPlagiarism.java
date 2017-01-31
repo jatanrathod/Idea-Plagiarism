@@ -24,6 +24,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     String filePath0;
     String filePath1;
     String randomNum;
+    String s3file1;
     String[] words;
     ArrayList<String> s2file1;
     ArrayList<String> s2file2;
@@ -46,18 +47,28 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     @Override
     protected Void doInBackground() throws Exception {
         String f1 = readFile(filePath0);
-        String f2 = readFile(filePath1);
+        //String f2 = readFile(filePath1);
         s1File1 = splitLines(f1);
-        s1File2 = splitLines(f2);
+        //s1File2 = splitLines(f2);
         s2file1 = extractMainWords(s1File1);
-        s2file2 = extractMainWords(s1File2);
-        Thesaurus thesaurus = new Thesaurus(words);
+        s3file1 = singleString(s2file1);
+        String[] words1 = s3file1.split(" ");
+        //s2file2 = extractMainWords(s1File2);
+        Thesaurus thesaurus = new Thesaurus(words1);
         try {
             synonyms = thesaurus.getSynonyms();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        System.out.println("Synonyms : ");
+        int i=0;
+        for (String word : words) {
+            synonymList = synonyms.get(word);
+            System.out.println(i++);
+            synonymList.forEach((String my) -> {
+                System.out.println(word + " : " + my);
+            });
+        }
         return null;
     }
 
@@ -114,5 +125,16 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
             file.set(k, sb.toString());
         }
         return file;
+    }
+
+    private String singleString(ArrayList<String> list) {
+        StringBuilder sb = new StringBuilder();
+            for (String s : list) {
+                sb.append(s);
+                sb.append(" ");
+            }
+            String result = sb.toString();
+            result = result.replaceAll("\\s+", " ");
+        return null;
     }
 }
