@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import javax.swing.SwingWorker;
@@ -23,8 +24,13 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     String filePath0;
     String filePath1;
     String randomNum;
-    ArrayList<String> file1;
-    ArrayList<String> file2;
+    String[] words;
+    ArrayList<String> s2file1;
+    ArrayList<String> s2file2;
+    ArrayList<String> s1File1;
+    ArrayList<String> s1File2;
+    HashMap<String, ArrayList<String>> synonyms = null;
+    ArrayList<String> synonymList = null;
     String[] common = {"a", "are", "an", "the", "it", "on", "and", "of", "for", "then", "than", "upto", "be", "is", "i", "to", "and", "in", "that", "have",
         "not", "on", "with", "he", "she", "as", "you", "do", "at", "this", "but", "his", "by", "from", "they", "we", "say", "her", "him", "or", "will",
         "my", "all", "would", "could", "there", "their", "what", "when", "why", "who", "how", "so", "up", "down", "if", "out", "in", "about", "get", "which",
@@ -41,10 +47,17 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     protected Void doInBackground() throws Exception {
         String f1 = readFile(filePath0);
         String f2 = readFile(filePath1);
-        file1 = splitLines(f1);
-        file2 = splitLines(f2);
-        file1 = extractMainWords(file1);
-        //file2 = extractMainWords(file2);
+        s1File1 = splitLines(f1);
+        s1File2 = splitLines(f2);
+        s2file1 = extractMainWords(s1File1);
+        s2file2 = extractMainWords(s1File2);
+        Thesaurus thesaurus = new Thesaurus(words);
+        try {
+            synonyms = thesaurus.getSynonyms();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return null;
     }
 
@@ -100,10 +113,6 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
             }
             file.set(k, sb.toString());
         }
-
-        for (int i = 0; i < file.size(); i++) {
-            System.out.println(i + " : " + file.get(i));
-        }
-        return result;
+        return file;
     }
 }
