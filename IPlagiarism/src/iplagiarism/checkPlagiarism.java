@@ -9,14 +9,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Scanner;
 import javax.swing.SwingWorker;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.ListUtils;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -30,7 +25,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     String randomNum;
     ArrayList<String> file1;
     ArrayList<String> file2;
-    String[] common = {"a", "an", "the", "it", "on", "and", "of", "for", "then", "than", "upto", "be", "is", "i", "to", "and", "in", "that", "have",
+    String[] common = {"a", "are", "an", "the", "it", "on", "and", "of", "for", "then", "than", "upto", "be", "is", "i", "to", "and", "in", "that", "have",
         "not", "on", "with", "he", "she", "as", "you", "do", "at", "this", "but", "his", "by", "from", "they", "we", "say", "her", "him", "or", "will",
         "my", "all", "would", "could", "there", "their", "what", "when", "why", "who", "how", "so", "up", "down", "if", "out", "in", "about", "get", "which",
         "go", "me", "make", "can", "like", "know", "time", "knew", "just", "put", "take", "took", "into", "your", "some", "them", "see", "other", "now",
@@ -81,12 +76,33 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         List<String> commonWords = new ArrayList<>(Arrays.asList(common));
         ListIterator<String> iterator = file.listIterator();
         while (iterator.hasNext()) {
-            iterator.set(iterator.next().replaceAll("[^0-9][.,]|[.,][^0-9]|(?![.,])\\p{Punct}", "").toLowerCase());
+            iterator.set(iterator.next()
+                    .replaceAll("[^0-9][.,]|[.,][^0-9]|(?![.,])\\p{Punct}", "")
+                    .replace("\n", "")
+                    .replace("\r", "")
+                    .replaceAll("\\s+", " ")
+                    .toLowerCase());
         }
-        
-        for(int i=0; i<file.size(); i++) 
-        {
-            System.out.println(i+" : "+file.get(i));
+        for (int k = 0; k < file.size(); k++) {
+            String[] words = file.get(k).split(" ");
+            ArrayList<String> wordsList = new ArrayList<>(Arrays.asList(words));
+            for (int i = 0; i < wordsList.size(); i++) {
+                for (int j = 0; j < common.length; j++) {
+                    if (wordsList.contains(common[j])) {
+                        wordsList.remove(common[j]);
+                    }
+                }
+            }
+            StringBuilder sb = new StringBuilder();
+            for (String s : wordsList) {
+                sb.append(s);
+                sb.append(" ");
+            }
+            file.set(k, sb.toString());
+        }
+
+        for (int i = 0; i < file.size(); i++) {
+            System.out.println(i + " : " + file.get(i));
         }
         return result;
     }
