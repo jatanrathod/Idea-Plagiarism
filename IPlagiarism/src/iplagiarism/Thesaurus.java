@@ -29,6 +29,7 @@ public class Thesaurus {
     }
 
     public HashMap<String, ArrayList<String>> getSynonyms() throws IOException {
+        try{
         if (synonyms.isEmpty()) {
             for (String word : wordList) {
                 Document doc = Jsoup.connect("http://www.thesaurus.com/browse/" + word)
@@ -44,6 +45,9 @@ public class Thesaurus {
                 }
                 synonyms.put(word, synonymList);
             }
+        }
+        }catch(IOException e){
+            System.out.println("Thesaurus.com is temparary unavailable");
         }
         return synonyms;
     }
