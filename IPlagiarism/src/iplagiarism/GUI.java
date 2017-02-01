@@ -17,7 +17,6 @@ public class GUI {
     public static String absPath0;
     public static String absPath1;
     
-    //constructor
     public GUI() {
         prepareGUI();
     }
