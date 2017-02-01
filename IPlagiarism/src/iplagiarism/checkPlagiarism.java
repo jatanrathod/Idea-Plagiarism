@@ -2,6 +2,7 @@ package iplagiarism;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,8 +13,8 @@ import org.apache.commons.io.FileUtils;
 
 public class checkPlagiarism extends SwingWorker<Void, String> {
 
-    int total_number_of_lines = 0;
-    int number_of_words_matched = 0;
+    double total_number_of_words;
+    double number_of_words_matched = 0;
     String filePath0;
     String filePath1;
     String randomNum;
@@ -40,6 +41,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         "most", "us"};
 
     checkPlagiarism(String filePath0, String filePath1) {
+        this.total_number_of_words = 0;
         this.filePath0 = filePath0;
         this.filePath1 = filePath1;
     }
@@ -48,27 +50,25 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     protected Void doInBackground() throws Exception {
         String f1 = readFile(filePath0);
         String f2 = readFile(filePath1);
+
+        total_number_of_words = countTotalWords(f2);
+        System.out.println("total : " + total_number_of_words);
+
         s1File1 = splitLines(f1);
-        //s1File2 = splitLines(f2);
         s2file1 = extractMainWords(s1File1);
         s3file1 = singleString(s2file1);
         s4file1 = getAllSynonyms(s3file1);
         KMPMatcher matcher = new KMPMatcher();
         for (String wordList : words) {
-            total_number_of_lines = total_number_of_lines + 1;
+            number_of_words_matched += matcher.KMPSearch(wordList, f2);
             synonymList = synonyms.get(wordList);
             for (String word : synonymList) {
                 number_of_words_matched += matcher.KMPSearch(word, f2);
             }
         }
-        System.out.println("total : "+total_number_of_lines);
-        System.out.println("found : "+number_of_words_matched);
-        for (String word : words) {
-            synonymList = s4file1.get(word);
-            for (String syn : synonymList) {
-                System.out.println(word + " : " + syn);
-            }
-        }
+        System.out.println("found : " + number_of_words_matched);
+        System.out.println("Percentage plagiarised : "
+                + Double.parseDouble(new DecimalFormat("##.##").format((number_of_words_matched / total_number_of_words) * 100)));
         return null;
     }
 
@@ -145,5 +145,12 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
             e.printStackTrace();
         }
         return synonyms;
+    }
+
+    private int countTotalWords(String str) {
+        int cnt = 0;
+        String trimmed = str.trim();
+        cnt = trimmed.isEmpty() ? 0 : trimmed.split("\\s+").length;
+        return cnt;
     }
 }
