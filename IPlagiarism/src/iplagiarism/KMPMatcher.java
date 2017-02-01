@@ -19,8 +19,6 @@ public class KMPMatcher {
                 i++;
             }
             if (j == M) {
-//                System.out.println("Found pattern "
-//                        + "at index " + (i - j));
                 count++;
                 j = lps[j - 1];
             } else if (i < N && pat.charAt(j) != txt.charAt(i)) {

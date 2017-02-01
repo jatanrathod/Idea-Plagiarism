@@ -22,7 +22,6 @@ public class GUI {
         prepareGUI();
     }
     
-    //preparing GUI (Main Window)
     private void prepareGUI() {
         mainFrame = new JFrame("Plagiarism Checker");
         mainFrame.setSize(400, 400);
