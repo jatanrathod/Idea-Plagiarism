@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package iplagiarism;
 
 import java.io.File;
@@ -15,29 +10,30 @@ import java.util.ListIterator;
 import javax.swing.SwingWorker;
 import org.apache.commons.io.FileUtils;
 
-/**
- *
- * @author Jatan
- */
 public class checkPlagiarism extends SwingWorker<Void, String> {
 
     String filePath0;
     String filePath1;
     String randomNum;
     String s3file1;
-    String[] words;
     ArrayList<String> s2file1;
     ArrayList<String> s2file2;
     ArrayList<String> s1File1;
     ArrayList<String> s1File2;
     HashMap<String, ArrayList<String>> synonyms = null;
     ArrayList<String> synonymList = null;
-    String[] common = {"a", "are", "an", "the", "has", "it", "on", "and", "of", "for", "then", "than", "upto", "be", "is", "i", "to", "and", "in", "that", "have",
-        "not", "on", "with", "he", "she", "as", "you", "do", "at", "this", "but", "his", "by", "from", "they", "we", "say", "her", "him", "or", "will",
-        "my", "all", "would", "could", "there", "their", "what", "when", "why", "who", "how", "so", "up", "down", "if", "out", "in", "about", "get", "which",
-        "go", "me", "make", "can", "like", "know", "time", "knew", "just", "put", "take", "took", "into", "your", "some", "them", "see", "other", "now",
-        "only", "come", "its", "it's", "over", "also", "back", "after", "our", "well", "way", "even", "new", "want", "because", "any", "these", "those",
-        "day", "most", "us"};
+    String[] common = {"a", "are", "an", "the", "has", "it", "on", "and",
+        "of", "for", "then", "than", "upto", "be", "is", "i", "to", "and",
+        "in", "that", "have", "not", "on", "with", "he", "she", "as", "you",
+        "do", "at", "this", "but", "his", "by", "from", "they", "we", "say",
+        "her", "him", "or", "will", "my", "all", "would", "could", "there",
+        "their", "what", "when", "why", "who", "how", "so", "up", "down",
+        "if", "out", "in", "about", "get", "which", "go", "me", "make",
+        "can", "like", "know", "time", "knew", "just", "put", "take", "took",
+        "into", "your", "some", "them", "see", "other", "now", "only", "come",
+        "its", "it's", "over", "also", "back", "after", "our", "well", "way",
+        "even", "new", "want", "because", "any", "these", "those", "day",
+        "most", "us"};
 
     checkPlagiarism(String filePath0, String filePath1) {
         this.filePath0 = filePath0;
@@ -52,10 +48,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         //s1File2 = splitLines(f2);
         s2file1 = extractMainWords(s1File1);
         s3file1 = singleString(s2file1);
-        String[] words1 = s3file1.split(" ");
-        for (int i = 0; i < words1.length; i++) {
-            System.out.println(words1[i]);
-        }
+        String[] words1 = s3file1.replace("\\s+", "").split(" ");
         //s2file2 = extractMainWords(s1File2);
         Thesaurus thesaurus = new Thesaurus(words1);
         try {
@@ -63,11 +56,17 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        for (String word : words1) {
+            synonymList = synonyms.get(word);
+            for (String my : synonymList) {
+                System.out.println(word + " : " + my);
+            }
+        }
         return null;
     }
 
     private String readFile(String path) throws IOException {
-        String contents = null;
+        String contents;
         File file = new File(path);
         contents = FileUtils.readFileToString(file, "UTF-8");
         return contents;
@@ -76,12 +75,12 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     private ArrayList<String> splitLines(String contents) {
         contents = replaceRegex(contents);
         String[] lines = contents.split(randomNum);
-        ArrayList<String> lineList = new ArrayList<String>(Arrays.asList(lines));
+        ArrayList<String> lineList = new ArrayList<>(Arrays.asList(lines));
         return lineList;
     }
 
     private String replaceRegex(String contents) {
-        String result = null;
+        String result;
         int rand = 3000 + (int) (Math.random() * 6000);
         this.randomNum = " " + String.valueOf(rand) + " ";
         result = contents.replace(".", randomNum).replace("?", randomNum).replace("!", randomNum);
@@ -89,8 +88,6 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     }
 
     private ArrayList<String> extractMainWords(ArrayList<String> file) {
-        ArrayList<String> result = null;
-        String str = null;
         List<String> commonWords = new ArrayList<>(Arrays.asList(common));
         ListIterator<String> iterator = file.listIterator();
         while (iterator.hasNext()) {
@@ -123,12 +120,12 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
 
     private String singleString(ArrayList<String> list) {
         StringBuilder sb = new StringBuilder();
-            for (String s : list) {
-                sb.append(s);
-                sb.append(" ");
-            }
-            String result = sb.toString();
-            result = result.replaceAll("\\s+", " ");
+        for (String s : list) {
+            sb.append(s);
+            sb.append(" ");
+        }
+        String result = sb.toString();
+        result = result.replaceAll("\\s+", " ");
         return result;
     }
 }
