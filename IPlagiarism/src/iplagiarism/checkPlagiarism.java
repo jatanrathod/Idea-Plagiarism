@@ -1,6 +1,7 @@
 package iplagiarism;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -15,9 +16,8 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
 
     double total_number_of_words;
     double number_of_words_matched = 0;
-    String filePath0;
-    String filePath1;
     String randomNum;
+    String dirPath;
     String s3file1;
     String[] words;
     ArrayList<String> s2file1;
@@ -40,14 +40,31 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         "even", "new", "want", "because", "any", "these", "those", "day",
         "most", "us"};
 
-    checkPlagiarism(String filePath0, String filePath1) {
+    checkPlagiarism(String dirPath) {
         this.total_number_of_words = 0;
-        this.filePath0 = filePath0;
-        this.filePath1 = filePath1;
+        this.dirPath = dirPath;
     }
 
     @Override
     protected Void doInBackground() throws Exception {
+        File dir = new File(dirPath);
+        if (dir.isDirectory()) {
+            File[] files = dir.listFiles(new FilenameFilter() {
+                public boolean accept(File dir, String filename) {
+                    return filename.endsWith(".txt");
+                }
+            });
+            String listOfPaths[] = Arrays.stream(files).map(File::getAbsolutePath)
+                    .toArray(String[]::new);
+
+            for (String str : listOfPaths) {
+                System.out.println(str);
+            }
+        }
+        return null;
+    }
+
+    private void check(String filePath0, String filePath1) throws IOException {
         String f1 = readFile(filePath0);
         String f2 = readFile(filePath1);
 
@@ -67,9 +84,17 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
             }
         }
         System.out.println("found : " + number_of_words_matched);
-        System.out.println("Percentage plagiarised : "
-                + Double.parseDouble(new DecimalFormat("##.##").format((number_of_words_matched / total_number_of_words) * 100)));
-        return null;
+        System.out.println("Percentage plagiarised " + getFileName(filePath0) + " -> " + getFileName(filePath1)
+                + +Double.parseDouble(new DecimalFormat("##.##").format((number_of_words_matched / total_number_of_words) * 100))
+        );
+
+    }
+
+    private String getFileName(String path) {
+        int index = path.lastIndexOf("/");
+        String fileName = path.substring(index + 1);
+        System.out.println(fileName);
+        return fileName;
     }
 
     private String readFile(String path) throws IOException {
@@ -153,4 +178,5 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         cnt = trimmed.isEmpty() ? 0 : trimmed.split("\\s+").length;
         return cnt;
     }
+
 }
