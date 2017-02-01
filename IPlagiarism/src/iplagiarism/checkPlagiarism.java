@@ -58,8 +58,8 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         }
         for (String word : words1) {
             synonymList = synonyms.get(word);
-            for (String my : synonymList) {
-                System.out.println(word + " : " + my);
+            for (String syn : synonymList) {
+                System.out.println(word + " : " + syn);
             }
         }
         return null;
