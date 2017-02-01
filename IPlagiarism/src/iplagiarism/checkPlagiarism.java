@@ -12,15 +12,19 @@ import org.apache.commons.io.FileUtils;
 
 public class checkPlagiarism extends SwingWorker<Void, String> {
 
+    int total_number_of_lines = 0;
+    int number_of_words_matched = 0;
     String filePath0;
     String filePath1;
     String randomNum;
     String s3file1;
+    String[] words;
     ArrayList<String> s2file1;
     ArrayList<String> s2file2;
     ArrayList<String> s1File1;
     ArrayList<String> s1File2;
     HashMap<String, ArrayList<String>> synonyms = null;
+    HashMap<String, ArrayList<String>> s4file1 = null;
     ArrayList<String> synonymList = null;
     String[] common = {"a", "are", "an", "the", "has", "it", "on", "and",
         "of", "for", "then", "than", "upto", "be", "is", "i", "to", "and",
@@ -43,21 +47,24 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     @Override
     protected Void doInBackground() throws Exception {
         String f1 = readFile(filePath0);
-        //String f2 = readFile(filePath1);
+        String f2 = readFile(filePath1);
         s1File1 = splitLines(f1);
         //s1File2 = splitLines(f2);
         s2file1 = extractMainWords(s1File1);
         s3file1 = singleString(s2file1);
-        String[] words1 = s3file1.replace("\\s+", "").split(" ");
-        //s2file2 = extractMainWords(s1File2);
-        Thesaurus thesaurus = new Thesaurus(words1);
-        try {
-            synonyms = thesaurus.getSynonyms();
-        } catch (IOException e) {
-            e.printStackTrace();
+        s4file1 = getAllSynonyms(s3file1);
+        KMPMatcher matcher = new KMPMatcher();
+        for (String wordList : words) {
+            total_number_of_lines = total_number_of_lines + 1;
+            synonymList = synonyms.get(wordList);
+            for (String word : synonymList) {
+                number_of_words_matched += matcher.KMPSearch(word, f2);
+            }
         }
-        for (String word : words1) {
-            synonymList = synonyms.get(word);
+        System.out.println("total : "+total_number_of_lines);
+        System.out.println("found : "+number_of_words_matched);
+        for (String word : words) {
+            synonymList = s4file1.get(word);
             for (String syn : synonymList) {
                 System.out.println(word + " : " + syn);
             }
@@ -127,5 +134,16 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         String result = sb.toString();
         result = result.replaceAll("\\s+", " ");
         return result;
+    }
+
+    private HashMap<String, ArrayList<String>> getAllSynonyms(String mainWords) {
+        words = mainWords.replace("\\s+", "").split(" ");
+        Thesaurus thesaurus = new Thesaurus(words);
+        try {
+            synonyms = thesaurus.getSynonyms();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return synonyms;
     }
 }
