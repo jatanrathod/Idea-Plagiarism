@@ -20,6 +20,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     String dirPath;
     String s3file1;
     String[] words;
+    String[] listOfPaths;
     ArrayList<String> s2file1;
     ArrayList<String> s2file2;
     ArrayList<String> s1File1;
@@ -54,11 +55,17 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
                     return filename.endsWith(".txt");
                 }
             });
-            String listOfPaths[] = Arrays.stream(files).map(File::getAbsolutePath)
+            listOfPaths = Arrays.stream(files).map(File::getAbsolutePath)
                     .toArray(String[]::new);
 
-            for (String str : listOfPaths) {
-                System.out.println(str);
+            for (int i = 0; i < listOfPaths.length; i++) {
+                for (int j = 0; j < listOfPaths.length; j++) {
+                    if (i == j) {
+                        continue;
+                    } else {
+                        check(listOfPaths[i], listOfPaths[j]);
+                    }
+                }
             }
         }
         return null;
@@ -85,15 +92,14 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         }
         System.out.println("found : " + number_of_words_matched);
         System.out.println("Percentage plagiarised " + getFileName(filePath0) + " -> " + getFileName(filePath1)
-                + +Double.parseDouble(new DecimalFormat("##.##").format((number_of_words_matched / total_number_of_words) * 100))
-        );
+                +"\n" +Double.parseDouble(new DecimalFormat("##.##").format((number_of_words_matched / total_number_of_words) * 100))
+        +"%");
 
     }
 
     private String getFileName(String path) {
-        int index = path.lastIndexOf("/");
+        int index = path.lastIndexOf("\\");
         String fileName = path.substring(index + 1);
-        System.out.println(fileName);
         return fileName;
     }
 
