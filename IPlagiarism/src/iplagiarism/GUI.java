@@ -11,8 +11,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 
 public class GUI extends JFrame {
 
@@ -54,6 +56,9 @@ public class GUI extends JFrame {
         dirPath.setPreferredSize(new Dimension(150, 5));
         processArea.setPreferredSize(new Dimension(150, 150));
         processArea.setEditable(false);
+        JScrollPane pane = new JScrollPane (processArea);
+        pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        pane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         
         subPanel = new JPanel();
         subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.LINE_AXIS));
@@ -73,7 +78,7 @@ public class GUI extends JFrame {
 
         subPanel = new JPanel();
         subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.LINE_AXIS));
-        subPanel.add(processArea);
+        subPanel.add(pane);
         contentPanel.add(subPanel);
 
         subPanel = new JPanel();

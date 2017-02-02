@@ -100,9 +100,11 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
             }
         }
         System.out.println("found : " + number_of_words_matched);
-        System.out.println("Percentage plagiarised " + getFileName(filePath0) + " -> " + getFileName(filePath1)
-                + "\n" + Double.parseDouble(new DecimalFormat("##.##").format((number_of_words_matched / total_number_of_words) * 100))
-                + "%");
+        String print = getFileName(filePath0) + " -> " + getFileName(filePath1)
+                + " : " + Double.parseDouble(new DecimalFormat("##.##").format((number_of_words_matched / total_number_of_words) * 100))
+                + "%";
+        System.out.println(print);
+        publish(print);
 
     }
 
