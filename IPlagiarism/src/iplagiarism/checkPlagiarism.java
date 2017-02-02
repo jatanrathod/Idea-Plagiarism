@@ -9,13 +9,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 import javax.swing.SwingWorker;
 import org.apache.commons.io.FileUtils;
 
 public class checkPlagiarism extends SwingWorker<Void, String> {
 
     double total_number_of_words;
-    double number_of_words_matched = 0;
+    double number_of_words_matched;
     String randomNum;
     String dirPath;
     String s3file1;
@@ -28,7 +29,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     HashMap<String, ArrayList<String>> synonyms = null;
     HashMap<String, ArrayList<String>> s4file1 = null;
     ArrayList<String> synonymList = null;
-    String[] common = {"a", "are", "an", "the", "has", "it", "on", "and",
+    String[] common = {"a", "are", "an", "am", "the", "has", "it", "on", "and",
         "of", "for", "then", "than", "upto", "be", "is", "i", "to", "and",
         "in", "that", "have", "not", "on", "with", "he", "she", "as", "you",
         "do", "at", "this", "but", "his", "by", "from", "they", "we", "say",
@@ -41,9 +42,10 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         "even", "new", "want", "because", "any", "these", "those", "day",
         "most", "us"};
 
-    checkPlagiarism(String dirPath) {
+    checkPlagiarism(String path) {
+        this.number_of_words_matched = 0;
         this.total_number_of_words = 0;
-        this.dirPath = dirPath;
+        this.dirPath = path;
     }
 
     @Override
@@ -55,15 +57,20 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
                     return filename.endsWith(".txt");
                 }
             });
-            listOfPaths = Arrays.stream(files).map(File::getAbsolutePath)
+            publish("Retrieving all Files from directory " + dirPath);
+            this.listOfPaths = Arrays.stream(files).map(File::getAbsolutePath)
                     .toArray(String[]::new);
-
-            for (int i = 0; i < listOfPaths.length; i++) {
-                for (int j = 0; j < listOfPaths.length; j++) {
+            
+            for(String names : listOfPaths){
+                publish(getFileName(names));
+            }
+            
+            for (int i = 0; i < this.listOfPaths.length; i++) {
+                for (int j = 0; j < this.listOfPaths.length; j++) {
                     if (i == j) {
                         continue;
                     } else {
-                        check(listOfPaths[i], listOfPaths[j]);
+                        check(this.listOfPaths[i], this.listOfPaths[j]);
                     }
                 }
             }
@@ -82,18 +89,20 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         s2file1 = extractMainWords(s1File1);
         s3file1 = singleString(s2file1);
         s4file1 = getAllSynonyms(s3file1);
+        Set<String> key = s4file1.keySet();
+        String[] keyWord = key.toArray(new String[key.size()]);
         KMPMatcher matcher = new KMPMatcher();
-        for (String wordList : words) {
+        for (String wordList : keyWord) {
             number_of_words_matched += matcher.KMPSearch(wordList, f2);
-            synonymList = synonyms.get(wordList);
+            synonymList = s4file1.get(wordList);
             for (String word : synonymList) {
                 number_of_words_matched += matcher.KMPSearch(word, f2);
             }
         }
         System.out.println("found : " + number_of_words_matched);
         System.out.println("Percentage plagiarised " + getFileName(filePath0) + " -> " + getFileName(filePath1)
-                +"\n" +Double.parseDouble(new DecimalFormat("##.##").format((number_of_words_matched / total_number_of_words) * 100))
-        +"%");
+                + "\n" + Double.parseDouble(new DecimalFormat("##.##").format((number_of_words_matched / total_number_of_words) * 100))
+                + "%");
 
     }
 
@@ -185,4 +194,12 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         return cnt;
     }
 
+    @Override
+    protected void process(List<String> chunks) {
+        for (final String string : chunks) {
+            GUI.processArea.append(string);
+            GUI.processArea.append("\n");
+        }
+
+    }
 }
