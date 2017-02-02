@@ -1,22 +1,45 @@
 package iplagiarism;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 
 public class GUI extends JFrame {
 
-    private JTextField dirPath = new JTextField();
-    private JTextArea processArea = new JTextArea();
-    private JButton checkButton = new JButton("Check");
-    private JButton selectButton = new JButton("Select");
-    private JPanel contentPanel;
+    private final JTextField dirPath;
+    public static JTextArea processArea;
+    private final JButton checkButton;
+    private final JButton selectButton;
+    private final JPanel contentPanel;
     private JPanel subPanel;
-    private JLabel dirLabel = new JLabel("Enter path of directory : ");
-    private JLabel processLabel = new JLabel("Process : ");
+    private final JLabel dirLabel;
+    private final JLabel processLabel;
 
     public GUI() {
+        this.processLabel = new JLabel("Process : ");
+        this.dirLabel = new JLabel("Enter path of directory : ");
+        this.selectButton = new JButton("Select");
+        this.dirPath = new JTextField();
+        this.processArea = new JTextArea();
+        this.checkButton = new JButton("Check");
+        this.subPanel = new JPanel();
+        this.contentPanel = new JPanel();
+        
+    }
+
+    public void Display() {
         setBounds(0, 0, 600, 300);
         setMinimumSize(new Dimension(600, 200));
         setMaximumSize(new Dimension(999, 200));
@@ -24,7 +47,6 @@ public class GUI extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setTitle("Plagiarism Checker");
 
-        contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.PAGE_AXIS));
         contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setContentPane(contentPanel);
@@ -33,9 +55,11 @@ public class GUI extends JFrame {
         processLabel.setPreferredSize(new Dimension(150, 10));
         dirPath.setPreferredSize(new Dimension(150, 5));
         processArea.setPreferredSize(new Dimension(150, 150));
-    }
-
-    public void Display() {
+        processArea.setEditable(false);
+        JScrollPane pane = new JScrollPane (processArea);
+        pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        pane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        
         subPanel = new JPanel();
         subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.LINE_AXIS));
         subPanel.add(dirLabel);
@@ -54,7 +78,7 @@ public class GUI extends JFrame {
 
         subPanel = new JPanel();
         subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.LINE_AXIS));
-        subPanel.add(processArea);
+        subPanel.add(pane);
         contentPanel.add(subPanel);
 
         subPanel = new JPanel();
@@ -62,7 +86,7 @@ public class GUI extends JFrame {
         subPanel.add(checkButton);
         contentPanel.add(subPanel);
 
-        EventSb0 esb = new EventSb0();
+        EventSb esb = new EventSb();
         selectButton.addActionListener(esb);
 
         EventCB ecb = new EventCB();
@@ -94,7 +118,7 @@ public class GUI extends JFrame {
         }
     }
 
-    class EventSb0 implements ActionListener {
+    class EventSb implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
