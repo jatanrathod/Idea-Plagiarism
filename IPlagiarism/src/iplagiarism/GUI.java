@@ -51,8 +51,8 @@ public class GUI extends JFrame {
         contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setContentPane(contentPanel);
 
-        dirLabel.setPreferredSize(new Dimension(150, 10));
-        processLabel.setPreferredSize(new Dimension(150, 10));
+        dirLabel.setPreferredSize(new Dimension(100, 20));
+        processLabel.setPreferredSize(new Dimension(150, 20));
         dirPath.setPreferredSize(new Dimension(150, 5));
         processArea.setPreferredSize(new Dimension(150, 150));
         processArea.setEditable(false);
