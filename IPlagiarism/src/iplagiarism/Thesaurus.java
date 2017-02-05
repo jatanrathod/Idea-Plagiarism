@@ -3,6 +3,7 @@ package iplagiarism;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import javax.swing.JOptionPane;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -47,7 +48,7 @@ public class Thesaurus {
             }
         }
         }catch(IOException e){
-            System.out.println("Thesaurus.com is temparary unavailable");
+            JOptionPane.showMessageDialog(null, "Thesaurus.com is temparary unavailable....");
         }
         return synonyms;
     }

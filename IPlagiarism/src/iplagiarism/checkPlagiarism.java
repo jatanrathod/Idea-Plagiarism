@@ -7,6 +7,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
@@ -20,6 +21,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     String randomNum;
     String dirPath;
     String s3file1;
+    String s4file1;
     String[] words;
     String[] listOfPaths;
     ArrayList<String> s2file1;
@@ -27,7 +29,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     ArrayList<String> s1File1;
     ArrayList<String> s1File2;
     HashMap<String, ArrayList<String>> synonyms = null;
-    HashMap<String, ArrayList<String>> s4file1 = null;
+    HashMap<String, ArrayList<String>> s5file1 = null;
     ArrayList<String> synonymList = null;
     String[] common = {"a", "are", "an", "am", "the", "has", "it", "on", "and",
         "of", "for", "then", "than", "upto", "be", "is", "i", "to", "and",
@@ -60,11 +62,11 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
             publish("Retrieving all Files from directory " + dirPath);
             this.listOfPaths = Arrays.stream(files).map(File::getAbsolutePath)
                     .toArray(String[]::new);
-            
-            for(String names : listOfPaths){
+
+            for (String names : listOfPaths) {
                 publish(getFileName(names));
             }
-            
+
             for (int i = 0; i < this.listOfPaths.length; i++) {
                 for (int j = 0; j < this.listOfPaths.length; j++) {
                     if (i == j) {
@@ -88,13 +90,14 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         s1File1 = splitLines(f1);
         s2file1 = extractMainWords(s1File1);
         s3file1 = singleString(s2file1);
-        s4file1 = getAllSynonyms(s3file1);
-        Set<String> key = s4file1.keySet();
+        s4file1 = removeDuplicates(s3file1);
+        s5file1 = getAllSynonyms(s4file1);
+        Set<String> key = s5file1.keySet();
         String[] keyWord = key.toArray(new String[key.size()]);
         KMPMatcher matcher = new KMPMatcher();
         for (String wordList : keyWord) {
             number_of_words_matched += matcher.KMPSearch(wordList, f2);
-            synonymList = s4file1.get(wordList);
+            synonymList = s5file1.get(wordList);
             for (String word : synonymList) {
                 number_of_words_matched += matcher.KMPSearch(word, f2);
             }
@@ -203,5 +206,15 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
             GUI.processArea.append("\n");
         }
 
+    }
+
+    private String removeDuplicates(String file) {
+        ArrayList<String> al = new ArrayList<>(Arrays.asList(file.split(" ")));
+        Set<String> hs = new HashSet<>();
+        hs.addAll(al);
+        al.clear();
+        al.addAll(hs);
+        String result = singleString(al);
+        return result;
     }
 }
