@@ -48,7 +48,7 @@ public class Thesaurus {
             }
         }
         }catch(IOException e){
-            JOptionPane.showMessageDialog(null, "Getting problrm in Retriving Synonyms...");
+            System.out.print("");
         }
         return synonyms;
     }
