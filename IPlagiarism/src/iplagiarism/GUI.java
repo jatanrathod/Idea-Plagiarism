@@ -26,6 +26,7 @@ public class GUI extends JFrame {
     private JPanel subPanel;
     private final JLabel dirLabel;
     private final JLabel processLabel;
+    private JScrollPane pane;
 
     public GUI() {
         this.processLabel = new JLabel("Process : ");
@@ -40,8 +41,8 @@ public class GUI extends JFrame {
     }
 
     public void Display() {
-        setBounds(0, 0, 600, 300);
-        setMinimumSize(new Dimension(600, 200));
+        setBounds(50, 50, 600, 200);
+        setMinimumSize(new Dimension(500, 300));
         setMaximumSize(new Dimension(999, 200));
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -54,9 +55,9 @@ public class GUI extends JFrame {
         dirLabel.setPreferredSize(new Dimension(100, 20));
         processLabel.setPreferredSize(new Dimension(150, 20));
         dirPath.setPreferredSize(new Dimension(150, 5));
-        processArea.setPreferredSize(new Dimension(150, 150));
+        processArea.setPreferredSize(new Dimension(0, 600));
         processArea.setEditable(false);
-        JScrollPane pane = new JScrollPane (processArea);
+        pane = new JScrollPane (processArea);
         pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         pane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         
