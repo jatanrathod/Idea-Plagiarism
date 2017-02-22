@@ -42,7 +42,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         "into", "your", "some", "them", "see", "other", "now", "only", "come",
         "its", "it's", "over", "also", "back", "after", "our", "well", "way",
         "even", "new", "want", "because", "any", "these", "those", "day",
-        "most", "us"};
+        "most", "us","hello","day","night","afternoon"};
 
     checkPlagiarism(String path) {
         this.number_of_words_matched = 0;
@@ -85,7 +85,8 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         String f2 = readFile(filePath1);
 
         total_number_of_words = countTotalWords(f2);
-        System.out.println("total : " + total_number_of_words);
+        int firstFileWords = countTotalWords(f1);
+        System.out.println("total : " + (total_number_of_words+firstFileWords));
 
         s1File1 = splitLines(f1);
         s2file1 = extractMainWords(s1File1);
@@ -104,7 +105,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         }
         System.out.println("found : " + number_of_words_matched);
         String print = getFileName(filePath0) + " -> " + getFileName(filePath1)
-                + " : " + Double.parseDouble(new DecimalFormat("##.##").format((number_of_words_matched / total_number_of_words) * 100))
+                + " : " + Double.parseDouble(new DecimalFormat("##.##").format(((number_of_words_matched*2) / (total_number_of_words+firstFileWords)) * 100))
                 + "%";
         System.out.println(print);
         publish(print);
@@ -144,7 +145,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         ListIterator<String> iterator = file.listIterator();
         while (iterator.hasNext()) {
             iterator.set(iterator.next()
-                    .replaceAll("[^0-9][.,]|[.,][^0-9]|(?![.,])\\p{Punct}", "")
+                    .replaceAll("[^0-9][.]|[.][^0-9]|(?![.,])\\p{Punct}|\\,", "")
                     .replace("\n", "")
                     .replace("\r", "")
                     .replaceAll("\\s+", " ")
@@ -199,15 +200,6 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         return cnt;
     }
 
-    @Override
-    protected void process(List<String> chunks) {
-        for (final String string : chunks) {
-            GUI.processArea.append(string);
-            GUI.processArea.append("\n");
-        }
-
-    }
-
     private String removeDuplicates(String file) {
         ArrayList<String> al = new ArrayList<>(Arrays.asList(file.split(" ")));
         Set<String> hs = new HashSet<>();
@@ -216,5 +208,13 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         al.addAll(hs);
         String result = singleString(al);
         return result;
+    }
+
+    @Override
+    protected void process(List<String> chunks) {
+        for (final String string : chunks) {
+            GUI.processArea.append(string);
+            GUI.processArea.append("\n");
+        }
     }
 }

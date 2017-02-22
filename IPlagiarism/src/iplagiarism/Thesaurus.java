@@ -19,7 +19,7 @@ public class Thesaurus {
         this.wordList = new ArrayList<>();
         for (String word : words) {
             wordList.add(word);
-        }
+    }
     }
 
     public Thesaurus(String word) {
@@ -48,7 +48,7 @@ public class Thesaurus {
             }
         }
         }catch(IOException e){
-            JOptionPane.showMessageDialog(null, "Thesaurus.com is temparary unavailable....");
+            JOptionPane.showMessageDialog(null, "Getting problrm in Retriving Synonyms...");
         }
         return synonyms;
     }
