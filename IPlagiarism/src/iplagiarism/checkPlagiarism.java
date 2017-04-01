@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,11 +14,10 @@ import java.util.ListIterator;
 import java.util.Set;
 import javax.swing.SwingWorker;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ArrayUtils;
 
 public class checkPlagiarism extends SwingWorker<Void, String> {
 
-    double total_number_of_words;
-    double number_of_words_matched;
     String randomNum;
     String dirPath;
     String s3file1;
@@ -42,11 +42,9 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         "into", "your", "some", "them", "see", "other", "now", "only", "come",
         "its", "it's", "over", "also", "back", "after", "our", "well", "way",
         "even", "new", "want", "because", "any", "these", "those", "day",
-        "most", "us","hello","day","night","afternoon"};
+        "most", "us", "hello", "day", "night", "afternoon"};
 
     checkPlagiarism(String path) {
-        this.number_of_words_matched = 0;
-        this.total_number_of_words = 0;
         this.dirPath = path;
     }
 
@@ -54,11 +52,17 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     protected Void doInBackground() throws Exception {
         File dir = new File(dirPath);
         if (dir.isDirectory()) {
-            File[] files = dir.listFiles(new FilenameFilter() {
+            File[] files1 = dir.listFiles(new FilenameFilter() {
                 public boolean accept(File dir, String filename) {
                     return filename.endsWith(".txt");
                 }
             });
+            File[] files2 = dir.listFiles(new FilenameFilter() {
+                public boolean accept(File dir, String filename) {
+                    return filename.endsWith(".docx");
+                }
+            });
+            File[] files = (File[]) ArrayUtils.addAll(files1, files2);
             publish("Retrieving all Files from directory " + dirPath);
             this.listOfPaths = Arrays.stream(files).map(File::getAbsolutePath)
                     .toArray(String[]::new);
@@ -81,31 +85,44 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     }
 
     private void check(String filePath0, String filePath1) throws IOException {
+        double total_number_of_words = 0;
+        double number_of_words_matched = 0;
+
         String f1 = readFile(filePath0);
         String f2 = readFile(filePath1);
 
-        total_number_of_words = countTotalWords(f2);
-        int firstFileWords = countTotalWords(f1);
-        System.out.println("total : " + (total_number_of_words+firstFileWords));
-
         s1File1 = splitLines(f1);
+        s1File2 = splitLines(f2);
         s2file1 = extractMainWords(s1File1);
+        //s2file2 = extractMainWords(s1File2);
         s3file1 = singleString(s2file1);
+        String s3file2 = singleString(s1File2);
         s4file1 = removeDuplicates(s3file1);
-        s5file1 = getAllSynonyms(s4file1);
+        s5file1 = getAllSynonyms(s4file1);//s5file1 has all synonyms.
+
+        //finalString has all keys of synonyms.
         Set<String> key = s5file1.keySet();
         String[] keyWord = key.toArray(new String[key.size()]);
-        KMPMatcher matcher = new KMPMatcher();
-        for (String wordList : keyWord) {
-            number_of_words_matched += matcher.KMPSearch(wordList, f2);
-            synonymList = s5file1.get(wordList);
+        List<String> finalString = new ArrayList<>(Arrays.asList(keyWord));
+
+        // counting total words from 2nd file..
+        total_number_of_words = countTotalWords(s3file2);
+        System.out.println("total words of 2nd file : " + (total_number_of_words));
+
+        //now finalString contains all main words to be match.
+        System.out.println("final string of 1st file to be Match with it's synonyms: " + finalString);
+        for (String wordFromList : finalString) {
+            KMPMatcher matcher = new KMPMatcher();
+            number_of_words_matched += matcher.KMPSearch(wordFromList, s3file2);
+            synonymList = s5file1.get(wordFromList);
             for (String word : synonymList) {
-                number_of_words_matched += matcher.KMPSearch(word, f2);
+                KMPMatcher matcher1 = new KMPMatcher();
+                number_of_words_matched += matcher1.KMPSearch(word, s3file2);
             }
         }
-        System.out.println("found : " + number_of_words_matched);
+        System.out.println("found matches considering it's synonyms : " + number_of_words_matched);
         String print = getFileName(filePath0) + " -> " + getFileName(filePath1)
-                + " : " + Double.parseDouble(new DecimalFormat("##.##").format(((number_of_words_matched*2) / (total_number_of_words+firstFileWords)) * 100))
+                + " : " + Double.parseDouble(new DecimalFormat("##.##").format(((number_of_words_matched) / (total_number_of_words)) * 100))
                 + "%";
         System.out.println(print);
         publish(print);

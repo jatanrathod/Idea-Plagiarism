@@ -2,10 +2,10 @@ package iplagiarism;
 
 public class KMPMatcher {
 
+    int count = 0;
     public int KMPSearch(String pat, String txt) {
         int M = pat.length();
         int N = txt.length();
-        int count = 0;
 
         int lps[] = new int[M];
         int j = 0;
@@ -19,8 +19,8 @@ public class KMPMatcher {
                 i++;
             }
             if (j == M) {
-                count++;
                 j = lps[j - 1];
+                count++;
             } else if (i < N && pat.charAt(j) != txt.charAt(i)) {
                 if (j != 0) {
                     j = lps[j - 1];
