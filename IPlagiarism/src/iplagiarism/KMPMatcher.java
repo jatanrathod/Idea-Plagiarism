@@ -1,9 +1,16 @@
 package iplagiarism;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
 public class KMPMatcher {
 
     int count = 0;
-    public int KMPSearch(String pat, String txt) {
+    List<Integer> position = new ArrayList<>();
+    List<String> matchedWords = new ArrayList<>();
+
+    public void KMPSearch(String pat, String txt) {
         int M = pat.length();
         int N = txt.length();
 
@@ -19,8 +26,13 @@ public class KMPMatcher {
                 i++;
             }
             if (j == M) {
+                int pos = i - j;
+                if (!position.contains(pos)) {
+                    position.add(pos);
+                    count++;
+                    matchedWords.add(pat);
+                }
                 j = lps[j - 1];
-                count++;
             } else if (i < N && pat.charAt(j) != txt.charAt(i)) {
                 if (j != 0) {
                     j = lps[j - 1];
@@ -29,7 +41,6 @@ public class KMPMatcher {
                 }
             }
         }
-        return count;
     }
 
     void computeLPSArray(String pat, int M, int lps[]) {

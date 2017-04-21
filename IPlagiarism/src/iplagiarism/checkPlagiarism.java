@@ -103,20 +103,24 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         System.out.println("total words of 2nd file : " + (total_number_of_words));
 
         //now finalString contains all main words to be match.
-        System.out.println("final string of 1st file to be Match with it's synonyms: " + finalString);
+        System.out.println("we used synonyms of : " + finalString);
+        KMPMatcher matcher = new KMPMatcher();
         for (String wordFromList : finalString) {
-            KMPMatcher matcher = new KMPMatcher();
             synonymList = s5file1.get(wordFromList);
             for (String word : synonymList) {
-                KMPMatcher matcher1 = new KMPMatcher();
-                number_of_words_matched += matcher1.KMPSearch(word, s3file2);
+                //KMPMatcher matcher1 = new KMPMatcher();
+                matcher.KMPSearch(word, s3file2);
             }
         }
         ArrayList<String> mainWords = new ArrayList<>(Arrays.asList(s4file1.replace("\\s+", "").split(" ")));
         for (String mainWord : mainWords) {
-            KMPMatcher matcher = new KMPMatcher();
-            number_of_words_matched += matcher.KMPSearch(mainWord, s3file2);
+            matcher.KMPSearch(mainWord, s3file2);
         }
+        String result = singleString((ArrayList<String>) matcher.matchedWords);
+        String filteredResult = removeDuplicates(result);
+        System.out.println("Words Matched With First File are : "+ filteredResult);
+        
+        number_of_words_matched = countTotalWords(filteredResult);
         System.out.println("found matches considering it's synonyms : " + number_of_words_matched);
         String print = getFileName(filePath0) + " -> " + getFileName(filePath1)
                 + " : " + Double.parseDouble(new DecimalFormat("##.##").format(((number_of_words_matched) / (total_number_of_words)) * 100))
