@@ -87,9 +87,9 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         s1file1 = splitLines(f1);
         s1file2 = splitLines(f2);
         s2file1 = extractMainWords(s1file1);
-        //s2file2 = extractMainWords(s1file2);
+        s2file2 = extractMainWords(s1file2);
         s3file1 = singleString(s2file1);
-        String s3file2 = singleString(s1file2);
+        String s3file2 = singleString(s2file2);
         s4file1 = removeDuplicates(s3file1);
         s5file1 = getAllSynonyms(s4file1);//s5file1 has all synonyms.
 
