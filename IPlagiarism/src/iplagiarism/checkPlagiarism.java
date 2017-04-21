@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -22,13 +21,11 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     String dirPath;
     String s3file1;
     String s4file1;
-    String[] words;
     String[] listOfPaths;
     ArrayList<String> s2file1;
     ArrayList<String> s2file2;
-    ArrayList<String> s1File1;
-    ArrayList<String> s1File2;
-    HashMap<String, ArrayList<String>> synonyms = null;
+    ArrayList<String> s1file1;
+    ArrayList<String> s1file2;
     HashMap<String, ArrayList<String>> s5file1 = null;
     ArrayList<String> synonymList = null;
     String[] common = {"a", "are", "an", "am", "the", "has", "it", "on", "and",
@@ -72,31 +69,27 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
             }
 
             for (int i = 0; i < this.listOfPaths.length; i++) {
-                for (int j = 0; j < this.listOfPaths.length; j++) {
-                    if (i == j) {
-                        continue;
-                    } else {
-                        check(this.listOfPaths[i], this.listOfPaths[j]);
-                    }
+                for (int j = i + 1; j < this.listOfPaths.length; j++) {
+                    check(this.listOfPaths[i], this.listOfPaths[j]);
                 }
             }
         }
         return null;
     }
 
-    private void check(String filePath0, String filePath1) throws IOException {
+    private void check(String filePath0, String filePath1) throws IOException, Exception {
         double total_number_of_words = 0;
         double number_of_words_matched = 0;
 
         String f1 = readFile(filePath0);
         String f2 = readFile(filePath1);
 
-        s1File1 = splitLines(f1);
-        s1File2 = splitLines(f2);
-        s2file1 = extractMainWords(s1File1);
-        //s2file2 = extractMainWords(s1File2);
+        s1file1 = splitLines(f1);
+        s1file2 = splitLines(f2);
+        s2file1 = extractMainWords(s1file1);
+        //s2file2 = extractMainWords(s1file2);
         s3file1 = singleString(s2file1);
-        String s3file2 = singleString(s1File2);
+        String s3file2 = singleString(s1file2);
         s4file1 = removeDuplicates(s3file1);
         s5file1 = getAllSynonyms(s4file1);//s5file1 has all synonyms.
 
@@ -113,12 +106,16 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         System.out.println("final string of 1st file to be Match with it's synonyms: " + finalString);
         for (String wordFromList : finalString) {
             KMPMatcher matcher = new KMPMatcher();
-            number_of_words_matched += matcher.KMPSearch(wordFromList, s3file2);
             synonymList = s5file1.get(wordFromList);
             for (String word : synonymList) {
                 KMPMatcher matcher1 = new KMPMatcher();
                 number_of_words_matched += matcher1.KMPSearch(word, s3file2);
             }
+        }
+        ArrayList<String> mainWords = new ArrayList<>(Arrays.asList(s4file1.replace("\\s+", "").split(" ")));
+        for (String mainWord : mainWords) {
+            KMPMatcher matcher = new KMPMatcher();
+            number_of_words_matched += matcher.KMPSearch(mainWord, s3file2);
         }
         System.out.println("found matches considering it's synonyms : " + number_of_words_matched);
         String print = getFileName(filePath0) + " -> " + getFileName(filePath1)
@@ -199,13 +196,14 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         return result;
     }
 
-    private HashMap<String, ArrayList<String>> getAllSynonyms(String mainWords) {
+    private HashMap<String, ArrayList<String>> getAllSynonyms(String mainWords) throws Exception {
+        HashMap<String, ArrayList<String>> synonyms = null;
+        String[] words;
         words = mainWords.replace("\\s+", "").split(" ");
         Thesaurus thesaurus = new Thesaurus(words);
         try {
             synonyms = thesaurus.getSynonyms();
         } catch (IOException e) {
-            e.printStackTrace();
         }
         return synonyms;
     }
