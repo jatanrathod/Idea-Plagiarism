@@ -87,9 +87,9 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         s1file1 = splitLines(f1);
         s1file2 = splitLines(f2);
         s2file1 = extractMainWords(s1file1);
-        //s2file2 = extractMainWords(s1file2);
+        s2file2 = extractMainWords(s1file2);
         s3file1 = singleString(s2file1);
-        String s3file2 = singleString(s1file2);
+        String s3file2 = singleString(s2file2);
         s4file1 = removeDuplicates(s3file1);
         s5file1 = getAllSynonyms(s4file1);//s5file1 has all synonyms.
 
@@ -101,7 +101,8 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         // counting total words from 2nd file..
         total_number_of_words = countTotalWords(s3file2);
         System.out.println("total words of 2nd file : " + (total_number_of_words));
-
+        
+        /* ******************** Search ************************  */
         //now finalString contains all main words to be match.
         System.out.println("we used synonyms of : " + finalString);
         KMPMatcher matcher = new KMPMatcher();
@@ -116,12 +117,16 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         for (String mainWord : mainWords) {
             matcher.KMPSearch(mainWord, s3file2);
         }
+        
+        /* ************************ Calculate **************************** */
         String result = singleString((ArrayList<String>) matcher.matchedWords);
         String filteredResult = removeDuplicates(result);
-        System.out.println("Words Matched With First File are : "+ filteredResult);
-        
+        System.out.println("Words Matched With First File are : " + filteredResult);
+
         number_of_words_matched = countTotalWords(filteredResult);
         System.out.println("found matches considering it's synonyms : " + number_of_words_matched);
+        
+        /* ***************** Display Result ********************** */
         String print = getFileName(filePath0) + " -> " + getFileName(filePath1)
                 + " : " + Double.parseDouble(new DecimalFormat("##.##").format(((number_of_words_matched) / (total_number_of_words)) * 100))
                 + "%";
