@@ -2,8 +2,8 @@ package iplagiarism;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import javax.swing.JOptionPane;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,7 +19,7 @@ public class Thesaurus {
         this.wordList = new ArrayList<>();
         for (String word : words) {
             wordList.add(word);
-    }
+        }
     }
 
     public Thesaurus(String word) {
@@ -29,26 +29,25 @@ public class Thesaurus {
         wordList.add(word);
     }
 
-    public HashMap<String, ArrayList<String>> getSynonyms() throws IOException {
-        try{
+    public HashMap<String, ArrayList<String>> getSynonyms() throws IOException, InterruptedException {
         if (synonyms.isEmpty()) {
             for (String word : wordList) {
-                Document doc = Jsoup.connect("http://www.thesaurus.com/browse/" + word)
-                        .userAgent("Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0")
-                        .timeout(3000)
-                        .get();
-                Elements block = doc.getElementsByClass("relevancy-block");
-                Elements list = block.select(".relevancy-list");
-                Elements text = list.select(".text");
-                ArrayList<String> synonymList = new ArrayList<>();
-                for (int j = 0; j < text.size(); j++) {
-                    synonymList.add(text.get(j).text());
+                try {
+                    Document doc = Jsoup.connect("http://www.thesaurus.com/browse/" + word)
+                            .userAgent("Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0")
+                            .timeout(3000)
+                            .get();
+                    Elements block = doc.getElementsByClass("relevancy-block");
+                    Elements list = block.select(".relevancy-list");
+                    Elements text = list.select(".text");
+                    ArrayList<String> synonymList = new ArrayList<>();
+                    for (int j = 0; j < text.size(); j++) {
+                        synonymList.add(text.get(j).text());
+                    }
+                    synonyms.put(word, synonymList);
+                } catch (IOException e) {
                 }
-                synonyms.put(word, synonymList);
             }
-        }
-        }catch(IOException e){
-            System.out.print("");
         }
         return synonyms;
     }
