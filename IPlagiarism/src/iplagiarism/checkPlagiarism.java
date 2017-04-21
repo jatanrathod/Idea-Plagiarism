@@ -101,7 +101,8 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         // counting total words from 2nd file..
         total_number_of_words = countTotalWords(s3file2);
         System.out.println("total words of 2nd file : " + (total_number_of_words));
-
+        
+        /* ******************** Search ************************  */
         //now finalString contains all main words to be match.
         System.out.println("we used synonyms of : " + finalString);
         KMPMatcher matcher = new KMPMatcher();
@@ -116,12 +117,16 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         for (String mainWord : mainWords) {
             matcher.KMPSearch(mainWord, s3file2);
         }
+        
+        /* ************************ Calculate **************************** */
         String result = singleString((ArrayList<String>) matcher.matchedWords);
         String filteredResult = removeDuplicates(result);
-        System.out.println("Words Matched With First File are : "+ filteredResult);
-        
+        System.out.println("Words Matched With First File are : " + filteredResult);
+
         number_of_words_matched = countTotalWords(filteredResult);
         System.out.println("found matches considering it's synonyms : " + number_of_words_matched);
+        
+        /* ***************** Display Result ********************** */
         String print = getFileName(filePath0) + " -> " + getFileName(filePath1)
                 + " : " + Double.parseDouble(new DecimalFormat("##.##").format(((number_of_words_matched) / (total_number_of_words)) * 100))
                 + "%";
