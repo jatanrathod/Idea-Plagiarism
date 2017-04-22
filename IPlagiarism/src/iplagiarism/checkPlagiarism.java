@@ -381,7 +381,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
                 pdDoc.close();
             }
         }
-        return content;
+        return content.replaceAll("\\r?\\n", " ");
     }
 
     @Override
