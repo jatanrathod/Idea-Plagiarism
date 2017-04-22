@@ -3,7 +3,7 @@ A Plagiarism Detector, Which detects the real idea behind the content is plagiar
 ![alt tag](https://github.com/jatanrathod/Idea-Plagiarism/blob/master/main_screen.PNG)
 </br>
 The plagiarised content of each file is stored in "output.txt" file, which will generate at project node.
-and past results are stored in "plagiarism_logs.dtd" file.
+and past results are stored in "plagiarism_logs.log" file.
 ## Prerequisites
 JVM.
 ## To Run
