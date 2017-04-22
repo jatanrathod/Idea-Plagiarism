@@ -15,6 +15,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
 
 import javax.swing.SwingWorker;
 
@@ -97,7 +99,12 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     }
 
     private void check(String filePath0, String filePath1) throws IOException, Exception {
+        FileHandler handler = new FileHandler("plagiarism_logs.log", true);
+        Logger logger = Logger.getLogger("iplagiarism");
+        logger.addHandler(handler);
+        
         getStopWords();
+
         double total_number_of_words = 0;
         double number_of_words_matched = 0;
 
@@ -114,6 +121,8 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
                     + " : " + Double.parseDouble(new DecimalFormat("##.##").format(100))
                     + "%";
             System.out.println(print);
+            System.out.println();
+            logger.info(print);
             publish(print);
             return;
         }
@@ -161,6 +170,8 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
                 + " : " + Double.parseDouble(new DecimalFormat("##.##").format(((number_of_words_matched) / (total_number_of_words)) * 100))
                 + "%";
         System.out.println(print);
+        System.out.println();
+        logger.info(print);
         publish(print);
 
     }
