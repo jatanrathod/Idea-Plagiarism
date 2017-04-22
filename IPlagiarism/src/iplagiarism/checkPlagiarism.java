@@ -1,6 +1,7 @@
 package iplagiarism;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -14,6 +15,12 @@ import java.util.Set;
 import javax.swing.SwingWorker;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
+import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.extractor.WordExtractor;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 
 public class checkPlagiarism extends SwingWorker<Void, String> {
 
@@ -50,18 +57,34 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         File dir = new File(dirPath);
         if (dir.isDirectory()) {
             File[] files1 = dir.listFiles(new FilenameFilter() {
+                @Override
                 public boolean accept(File dir, String filename) {
                     return filename.endsWith(".txt");
                 }
             });
             File[] files2 = dir.listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String filename) {
+                    return filename.endsWith(".doc");
+                }
+            });
+            File[] files3 = dir.listFiles(new FilenameFilter() {
+                @Override
                 public boolean accept(File dir, String filename) {
                     return filename.endsWith(".docx");
                 }
             });
-            File[] files = (File[]) ArrayUtils.addAll(files1, files2);
+            File[] files4 = dir.listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String filename) {
+                    return filename.endsWith(".pdf");
+                }
+            });
+            File[] files12 = (File[]) ArrayUtils.addAll(files1, files2);
+            File[] files123 = (File[]) ArrayUtils.addAll(files12, files3);
+            File[] files1234 = (File[]) ArrayUtils.addAll(files123, files4);
             publish("Retrieving all Files from directory " + dirPath);
-            this.listOfPaths = Arrays.stream(files).map(File::getAbsolutePath)
+            this.listOfPaths = Arrays.stream(files1234).map(File::getAbsolutePath)
                     .toArray(String[]::new);
 
             for (String names : listOfPaths) {
@@ -98,34 +121,34 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         String[] keyWord = key.toArray(new String[key.size()]);
         List<String> finalString = new ArrayList<>(Arrays.asList(keyWord));
 
-        // counting total words from 2nd file..
-        total_number_of_words = countTotalWords(s3file2);
-        System.out.println("total words of 2nd file : " + (total_number_of_words));
-        
         /* ******************** Search ************************  */
         //now finalString contains all main words to be match.
-        System.out.println("we used synonyms of : " + finalString);
         KMPMatcher matcher = new KMPMatcher();
         for (String wordFromList : finalString) {
             synonymList = s5file1.get(wordFromList);
             for (String word : synonymList) {
-                //KMPMatcher matcher1 = new KMPMatcher();
                 matcher.KMPSearch(word, s3file2);
             }
         }
-        ArrayList<String> mainWords = new ArrayList<>(Arrays.asList(s4file1.replace("\\s+", "").split(" ")));
+        ArrayList<String> mainWords = new ArrayList<>(Arrays.asList(s3file1.replace("\\s+", "").split(" ")));
         for (String mainWord : mainWords) {
             matcher.KMPSearch(mainWord, s3file2);
         }
-        
+
         /* ************************ Calculate **************************** */
+        // counting total words from 2nd file..
+        total_number_of_words = countTotalWords(s3file2);
+        System.out.println("total words of 2nd file : " + (total_number_of_words));
+
+        System.out.println("we used synonyms of : " + finalString);
+
         String result = singleString((ArrayList<String>) matcher.matchedWords);
         String filteredResult = removeDuplicates(result);
         System.out.println("Words Matched With First File are : " + filteredResult);
 
         number_of_words_matched = countTotalWords(filteredResult);
         System.out.println("found matches considering it's synonyms : " + number_of_words_matched);
-        
+
         /* ***************** Display Result ********************** */
         String print = getFileName(filePath0) + " -> " + getFileName(filePath1)
                 + " : " + Double.parseDouble(new DecimalFormat("##.##").format(((number_of_words_matched) / (total_number_of_words)) * 100))
@@ -142,10 +165,24 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     }
 
     private String readFile(String path) throws IOException {
-        String contents;
-        File file = new File(path);
-        contents = FileUtils.readFileToString(file, "UTF-8");
-        return contents;
+        String contents = null;
+        if (path.endsWith(".txt")) {
+            File file = new File(path);
+            contents = FileUtils.readFileToString(file, "UTF-8");
+            return contents;
+        } else if (path.endsWith(".doc")) {
+            contents = readDoc(path);
+            return contents;
+        } else if (path.endsWith(".docx")) {
+            contents = readDocx(path);
+            return contents;
+        } else if (path.endsWith(".pdf")) {
+            contents = readPdf(path);
+            return contents;
+        } else {
+            publish(path + " is not Supported. ");
+            return contents;
+        }
     }
 
     private ArrayList<String> splitLines(String contents) {
@@ -232,6 +269,71 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         al.addAll(hs);
         String result = singleString(al);
         return result;
+    }
+
+    private ArrayList<Integer> removeDuplicateInt(ArrayList<Integer> al) {
+        Set<Integer> hs = new HashSet<>();
+        hs.addAll(al);
+        al.clear();
+        al.addAll(hs);
+        return al;
+    }
+
+    private String readDoc(String path) {
+        String content = "";
+        try {
+            File file = new File(path);
+            FileInputStream fis = new FileInputStream(file.getAbsolutePath());
+
+            HWPFDocument doc = new HWPFDocument(fis);
+
+            WordExtractor we = new WordExtractor(doc);
+            String[] paragraphs = we.getParagraphText();
+            for (String para : paragraphs) {
+                content += para.toString();
+            }
+            fis.close();
+            return content;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return content;
+    }
+
+    private String readDocx(String path) {
+        String content = "";
+        try {
+            File file = new File(path);
+            FileInputStream fis = new FileInputStream(file.getAbsolutePath());
+
+            XWPFDocument document = new XWPFDocument(fis);
+
+            List<XWPFParagraph> paragraphs = document.getParagraphs();
+
+            for (XWPFParagraph para : paragraphs) {
+                content += para.getText();
+            }
+            fis.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return content;
+    }
+
+    private String readPdf(String path) {
+        String content = "";
+        PDFTextStripper pdfStripper = null;
+        PDDocument pdDoc = null;
+        try {
+            pdDoc = PDDocument.load(new File(path));
+            pdfStripper = new PDFTextStripper();
+            pdfStripper.setStartPage(1);
+            pdfStripper.setEndPage(pdDoc.getNumberOfPages());
+            content = pdfStripper.getText(pdDoc);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return content;
     }
 
     @Override
