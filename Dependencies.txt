@@ -1,0 +1,10 @@
+commons-io-2.4
+jsoup-1.6.0
+apache-commons-lang
+dom4j-1.7-20060614
+poi-3.9
+poi-ooxml-3.9
+poi-ooxml-schemas-3.9
+poi-scratchpad-3.9
+xmlbeans-2.4.0
+pdfbox-app-2.0.5
