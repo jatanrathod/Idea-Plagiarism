@@ -157,7 +157,6 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     private void getStopWords() throws IOException {
         String fileWords = readFile("stopwords.txt");
         this.common = fileWords.split("\\r?\\n");
-        System.out.println(Arrays.toString(this.common));
     }
     
     private String getFileName(String path) {
