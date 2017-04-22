@@ -41,18 +41,19 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     ArrayList<String> s1file2;
     HashMap<String, ArrayList<String>> s5file1 = null;
     ArrayList<String> synonymList = null;
-    String[] common = {"a", "are", "an", "am", "the", "has", "it", "on", "and",
-        "of", "for", "then", "than", "upto", "be", "is", "i", "to", "and",
-        "in", "that", "have", "not", "on", "with", "he", "she", "as", "you",
-        "do", "at", "this", "but", "his", "by", "from", "they", "we", "say",
-        "her", "him", "or", "will", "my", "all", "would", "could", "there",
-        "their", "what", "when", "why", "who", "how", "so", "up", "down",
-        "if", "out", "in", "about", "get", "which", "go", "me", "make",
-        "can", "like", "know", "time", "knew", "just", "put", "take", "took",
-        "into", "your", "some", "them", "see", "other", "now", "only", "come",
-        "its", "it's", "over", "also", "back", "after", "our", "well", "way",
-        "even", "new", "want", "because", "any", "these", "those", "day",
-        "most", "us", "hello", "day", "night", "afternoon"};
+    String[] common = null;
+//    String[] common = {"a", "are", "an", "am", "the", "has", "it", "on", "and",
+//        "of", "for", "then", "than", "upto", "be", "is", "i", "to", "and",
+//        "in", "that", "have", "not", "on", "with", "he", "she", "as", "you",
+//        "do", "at", "this", "but", "his", "by", "from", "they", "we", "say",
+//        "her", "him", "or", "will", "my", "all", "would", "could", "there",
+//        "their", "what", "when", "why", "who", "how", "so", "up", "down",
+//        "if", "out", "in", "about", "get", "which", "go", "me", "make",
+//        "can", "like", "know", "time", "knew", "just", "put", "take", "took",
+//        "into", "your", "some", "them", "see", "other", "now", "only", "come",
+//        "its", "it's", "over", "also", "back", "after", "our", "well", "way",
+//        "even", "new", "want", "because", "any", "these", "those", "day",
+//        "most", "us", "hello", "day", "night", "afternoon"};
 
     checkPlagiarism(String path) {
         this.dirPath = path;
@@ -107,6 +108,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     }
 
     private void check(String filePath0, String filePath1) throws IOException, Exception {
+        getStopWords();
         double total_number_of_words = 0;
         double number_of_words_matched = 0;
 
@@ -164,6 +166,12 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
 
     }
 
+    private void getStopWords() throws IOException {
+        String fileWords = readFile("stopwords.txt");
+        this.common = fileWords.split("\\r?\\n");
+        System.out.println(Arrays.toString(this.common));
+    }
+    
     private String getFileName(String path) {
         int index = path.lastIndexOf("\\");
         String fileName = path.substring(index + 1);
