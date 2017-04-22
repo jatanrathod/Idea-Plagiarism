@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+
 import java.text.DecimalFormat;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,11 +14,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
+
 import javax.swing.SwingWorker;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
+
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -35,18 +41,19 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     ArrayList<String> s1file2;
     HashMap<String, ArrayList<String>> s5file1 = null;
     ArrayList<String> synonymList = null;
-    String[] common = {"a", "are", "an", "am", "the", "has", "it", "on", "and",
-        "of", "for", "then", "than", "upto", "be", "is", "i", "to", "and",
-        "in", "that", "have", "not", "on", "with", "he", "she", "as", "you",
-        "do", "at", "this", "but", "his", "by", "from", "they", "we", "say",
-        "her", "him", "or", "will", "my", "all", "would", "could", "there",
-        "their", "what", "when", "why", "who", "how", "so", "up", "down",
-        "if", "out", "in", "about", "get", "which", "go", "me", "make",
-        "can", "like", "know", "time", "knew", "just", "put", "take", "took",
-        "into", "your", "some", "them", "see", "other", "now", "only", "come",
-        "its", "it's", "over", "also", "back", "after", "our", "well", "way",
-        "even", "new", "want", "because", "any", "these", "those", "day",
-        "most", "us", "hello", "day", "night", "afternoon"};
+    String[] common = null;
+//    String[] common = {"a", "are", "an", "am", "the", "has", "it", "on", "and",
+//        "of", "for", "then", "than", "upto", "be", "is", "i", "to", "and",
+//        "in", "that", "have", "not", "on", "with", "he", "she", "as", "you",
+//        "do", "at", "this", "but", "his", "by", "from", "they", "we", "say",
+//        "her", "him", "or", "will", "my", "all", "would", "could", "there",
+//        "their", "what", "when", "why", "who", "how", "so", "up", "down",
+//        "if", "out", "in", "about", "get", "which", "go", "me", "make",
+//        "can", "like", "know", "time", "knew", "just", "put", "take", "took",
+//        "into", "your", "some", "them", "see", "other", "now", "only", "come",
+//        "its", "it's", "over", "also", "back", "after", "our", "well", "way",
+//        "even", "new", "want", "because", "any", "these", "those", "day",
+//        "most", "us", "hello", "day", "night", "afternoon"};
 
     checkPlagiarism(String path) {
         this.dirPath = path;
@@ -101,6 +108,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     }
 
     private void check(String filePath0, String filePath1) throws IOException, Exception {
+        getStopWords();
         double total_number_of_words = 0;
         double number_of_words_matched = 0;
 
@@ -158,6 +166,12 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
 
     }
 
+    private void getStopWords() throws IOException {
+        String fileWords = readFile("stopwords.txt");
+        this.common = fileWords.split("\\r?\\n");
+        System.out.println(Arrays.toString(this.common));
+    }
+    
     private String getFileName(String path) {
         int index = path.lastIndexOf("\\");
         String fileName = path.substring(index + 1);
@@ -320,7 +334,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         return content;
     }
 
-    private String readPdf(String path) {
+    private String readPdf(String path) throws IOException {
         String content = "";
         PDFTextStripper pdfStripper = null;
         PDDocument pdDoc = null;
@@ -332,6 +346,10 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
             content = pdfStripper.getText(pdDoc);
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (pdDoc != null) {
+                pdDoc.close();
+            }
         }
         return content;
     }
