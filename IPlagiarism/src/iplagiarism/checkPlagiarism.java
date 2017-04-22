@@ -9,6 +9,7 @@ import java.text.DecimalFormat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -42,18 +43,6 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     HashMap<String, ArrayList<String>> s5file1 = null;
     ArrayList<String> synonymList = null;
     String[] common = null;
-//    String[] common = {"a", "are", "an", "am", "the", "has", "it", "on", "and",
-//        "of", "for", "then", "than", "upto", "be", "is", "i", "to", "and",
-//        "in", "that", "have", "not", "on", "with", "he", "she", "as", "you",
-//        "do", "at", "this", "but", "his", "by", "from", "they", "we", "say",
-//        "her", "him", "or", "will", "my", "all", "would", "could", "there",
-//        "their", "what", "when", "why", "who", "how", "so", "up", "down",
-//        "if", "out", "in", "about", "get", "which", "go", "me", "make",
-//        "can", "like", "know", "time", "knew", "just", "put", "take", "took",
-//        "into", "your", "some", "them", "see", "other", "now", "only", "come",
-//        "its", "it's", "over", "also", "back", "after", "our", "well", "way",
-//        "even", "new", "want", "because", "any", "these", "those", "day",
-//        "most", "us", "hello", "day", "night", "afternoon"};
 
     checkPlagiarism(String path) {
         this.dirPath = path;
@@ -119,6 +108,16 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         s1file2 = splitLines(f2);
         s2file1 = extractMainWords(s1file1);
         s2file2 = extractMainWords(s1file2);
+
+        if (equalLists(s2file1, s2file2)) {
+            String print = getFileName(filePath0) + " -> " + getFileName(filePath1)
+                    + " : " + Double.parseDouble(new DecimalFormat("##.##").format(100))
+                    + "%";
+            System.out.println(print);
+            publish(print);
+            return;
+        }
+
         s3file1 = singleString(s2file1);
         String s3file2 = singleString(s2file2);
         s4file1 = removeDuplicates(s3file1);
@@ -169,9 +168,29 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     private void getStopWords() throws IOException {
         String fileWords = readFile("stopwords.txt");
         this.common = fileWords.split("\\r?\\n");
-        System.out.println(Arrays.toString(this.common));
     }
-    
+
+    public boolean equalLists(List<String> one, List<String> two) {
+        if (one == null && two == null) {
+            return true;
+        }
+
+        if ((one == null && two != null)
+                || one != null && two == null
+                || one.size() != two.size()) {
+            return false;
+        }
+
+        //to avoid messing the order of the lists we will use a copy
+        //as noted in comments by A. R. S.
+        one = new ArrayList<String>(one);
+        two = new ArrayList<String>(two);
+
+        Collections.sort(one);
+        Collections.sort(two);
+        return one.equals(two);
+    }
+
     private String getFileName(String path) {
         int index = path.lastIndexOf("\\");
         String fileName = path.substring(index + 1);
