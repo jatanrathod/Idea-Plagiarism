@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+
 import java.text.DecimalFormat;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,11 +14,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
+
 import javax.swing.SwingWorker;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
+
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -320,7 +326,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         return content;
     }
 
-    private String readPdf(String path) {
+    private String readPdf(String path) throws IOException {
         String content = "";
         PDFTextStripper pdfStripper = null;
         PDDocument pdDoc = null;
@@ -332,6 +338,10 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
             content = pdfStripper.getText(pdDoc);
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (pdDoc != null) {
+                pdDoc.close();
+            }
         }
         return content;
     }
