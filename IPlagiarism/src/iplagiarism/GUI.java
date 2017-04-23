@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -11,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -27,6 +29,7 @@ public class GUI extends JFrame {
     private final JLabel dirLabel;
     private final JLabel processLabel;
     private JScrollPane pane;
+    public static JProgressBar pbar; 
 
     public GUI() {
         this.processLabel = new JLabel("Process : ");
@@ -37,7 +40,7 @@ public class GUI extends JFrame {
         this.checkButton = new JButton("Check");
         this.subPanel = new JPanel();
         this.contentPanel = new JPanel();
-        
+        this.pbar = new JProgressBar(0,100);
     }
 
     public void Display() {
@@ -46,7 +49,7 @@ public class GUI extends JFrame {
         setMaximumSize(new Dimension(999, 200));
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setTitle("Plagiarism Checker");
+        setTitle("JAM Plagiarism Checker");
 
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.PAGE_AXIS));
         contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -55,11 +58,13 @@ public class GUI extends JFrame {
         dirLabel.setPreferredSize(new Dimension(100, 20));
         processLabel.setPreferredSize(new Dimension(150, 20));
         dirPath.setPreferredSize(new Dimension(150, 5));
-        processArea.setPreferredSize(new Dimension(0, 600));
+        processArea.setPreferredSize(new Dimension(0, 1000));
         processArea.setEditable(false);
         pane = new JScrollPane (processArea);
         pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         pane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        pbar.setPreferredSize(new Dimension(150, 5));
+        pbar.setStringPainted(true);
         
         subPanel = new JPanel();
         subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.LINE_AXIS));
@@ -69,6 +74,7 @@ public class GUI extends JFrame {
         subPanel = new JPanel();
         subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.LINE_AXIS));
         subPanel.add(dirPath);
+        subPanel.add(Box.createRigidArea(new Dimension(5,0)));
         subPanel.add(selectButton);
         contentPanel.add(subPanel);
 
@@ -81,9 +87,11 @@ public class GUI extends JFrame {
         subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.LINE_AXIS));
         subPanel.add(pane);
         contentPanel.add(subPanel);
-
+        
         subPanel = new JPanel();
         subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.LINE_AXIS));
+        subPanel.add(pbar);
+        subPanel.add(Box.createRigidArea(new Dimension(5,0)));
         subPanel.add(checkButton);
         contentPanel.add(subPanel);
 
@@ -92,6 +100,7 @@ public class GUI extends JFrame {
 
         EventCB ecb = new EventCB();
         checkButton.addActionListener(ecb);
+             
         setVisible(true);
     }
 

@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
 import org.apache.commons.io.FileUtils;
@@ -50,8 +51,15 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         this.dirPath = path;
     }
 
+    private static void failIfInterrupted() throws InterruptedException {
+        if (Thread.currentThread().isInterrupted()) {
+            throw new InterruptedException("Interrupted while searching files");
+        }
+    }
+
     @Override
     protected Void doInBackground() throws Exception {
+        failIfInterrupted();
         File dir = new File(dirPath);
         if (dir.isDirectory()) {
             File[] files1 = dir.listFiles(new FilenameFilter() {
@@ -89,9 +97,21 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
                 publish(getFileName(names));
             }
 
+            if (listOfPaths.length < 2) {
+                JOptionPane.showMessageDialog(null, "Please Enter atleast 2 files to compare.");
+            }
+            
+            int n = listOfPaths.length;
+            int x = 0;
+            int cnt = 0;
+            String progress = null;
             for (int i = 0; i < this.listOfPaths.length; i++) {
                 for (int j = i + 1; j < this.listOfPaths.length; j++) {
                     check(this.listOfPaths[i], this.listOfPaths[j]);
+                    cnt++;
+                    x = (cnt*100)/(n*(n-1)/2);
+                    progress = Integer.toString(x);
+                    publish(progress);
                 }
             }
         }
@@ -102,7 +122,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         FileHandler handler = new FileHandler("plagiarism_logs.log", true);
         Logger logger = Logger.getLogger("iplagiarism");
         logger.addHandler(handler);
-        
+
         getStopWords();
 
         double total_number_of_words = 0;
@@ -191,11 +211,8 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
                 || one.size() != two.size()) {
             return false;
         }
-
-        //to avoid messing the order of the lists we will use a copy
-        //as noted in comments by A. R. S.
-        one = new ArrayList<String>(one);
-        two = new ArrayList<String>(two);
+        one = new ArrayList<>(one);
+        two = new ArrayList<>(two);
 
         Collections.sort(one);
         Collections.sort(two);
@@ -387,8 +404,19 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     @Override
     protected void process(List<String> chunks) {
         for (final String string : chunks) {
-            GUI.processArea.append(string);
-            GUI.processArea.append("\n");
+            int progress = 0;
+            if (string.matches("[0-9]+")) {
+                progress = Integer.parseInt(string);
+                GUI.pbar.setValue(progress);
+            } else {
+                GUI.processArea.append(string);
+                GUI.processArea.append("\n");
+            }
         }
+    }
+
+    @Override
+    protected void done() {
+        JOptionPane.showMessageDialog(null, "Done.\n See output.txt for More Details.");
     }
 }
