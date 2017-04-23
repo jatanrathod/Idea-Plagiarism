@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
 import org.apache.commons.io.FileUtils;
@@ -89,6 +90,10 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
                 publish(getFileName(names));
             }
 
+            if (listOfPaths.length < 2) {
+                JOptionPane.showMessageDialog(null, "Please Enter atleast 2 files to compare.");
+            }
+
             for (int i = 0; i < this.listOfPaths.length; i++) {
                 for (int j = i + 1; j < this.listOfPaths.length; j++) {
                     check(this.listOfPaths[i], this.listOfPaths[j]);
@@ -102,7 +107,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         FileHandler handler = new FileHandler("plagiarism_logs.log", true);
         Logger logger = Logger.getLogger("iplagiarism");
         logger.addHandler(handler);
-        
+
         getStopWords();
 
         double total_number_of_words = 0;
