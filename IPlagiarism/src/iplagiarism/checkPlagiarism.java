@@ -104,6 +104,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
             for (int i = 0; i < this.listOfPaths.length; i++) {
                 for (int j = i + 1; j < this.listOfPaths.length; j++) {
                     check(this.listOfPaths[i], this.listOfPaths[j]);
+                    setProgress(10);
                 }
             }
         }
@@ -399,5 +400,10 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
             GUI.processArea.append(string);
             GUI.processArea.append("\n");
         }
+    }
+
+    @Override
+    protected void done() {
+        JOptionPane.showMessageDialog(null, "Done. See output.txt for More Details.");
     }
 }
