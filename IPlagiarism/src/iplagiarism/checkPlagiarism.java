@@ -100,11 +100,18 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
             if (listOfPaths.length < 2) {
                 JOptionPane.showMessageDialog(null, "Please Enter atleast 2 files to compare.");
             }
-
+            
+            int n = listOfPaths.length;
+            int x = 0;
+            int cnt = 0;
+            String progress = null;
             for (int i = 0; i < this.listOfPaths.length; i++) {
                 for (int j = i + 1; j < this.listOfPaths.length; j++) {
                     check(this.listOfPaths[i], this.listOfPaths[j]);
-                    setProgress(10);
+                    cnt++;
+                    x = (cnt*100)/(n*(n-1)/2);
+                    progress = Integer.toString(x);
+                    publish(progress);
                 }
             }
         }
@@ -397,8 +404,14 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
     @Override
     protected void process(List<String> chunks) {
         for (final String string : chunks) {
-            GUI.processArea.append(string);
-            GUI.processArea.append("\n");
+            int progress = 0;
+            if (string.matches("[0-9]+")) {
+                progress = Integer.parseInt(string);
+                GUI.pbar.setValue(progress);
+            } else {
+                GUI.processArea.append(string);
+                GUI.processArea.append("\n");
+            }
         }
     }
 

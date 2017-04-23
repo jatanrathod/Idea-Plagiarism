@@ -28,6 +28,8 @@ public class GUI extends JFrame {
     private final JLabel dirLabel;
     private final JLabel processLabel;
     private JScrollPane pane;
+    public static JProgressBar pbar; 
+
     public GUI() {
         this.processLabel = new JLabel("Process : ");
         this.dirLabel = new JLabel("Enter path of directory : ");
@@ -37,6 +39,7 @@ public class GUI extends JFrame {
         this.checkButton = new JButton("Check");
         this.subPanel = new JPanel();
         this.contentPanel = new JPanel();
+        this.pbar = new JProgressBar(0,100);
     }
 
     public void Display() {
@@ -59,6 +62,8 @@ public class GUI extends JFrame {
         pane = new JScrollPane (processArea);
         pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         pane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        pbar.setPreferredSize(new Dimension(150, 5));
+        pbar.setStringPainted(true);
         
         subPanel = new JPanel();
         subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.LINE_AXIS));
@@ -83,6 +88,7 @@ public class GUI extends JFrame {
         
         subPanel = new JPanel();
         subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.LINE_AXIS));
+        subPanel.add(pbar);
         subPanel.add(checkButton);
         contentPanel.add(subPanel);
 
