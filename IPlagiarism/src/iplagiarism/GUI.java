@@ -58,7 +58,7 @@ public class GUI extends JFrame {
         dirLabel.setPreferredSize(new Dimension(100, 20));
         processLabel.setPreferredSize(new Dimension(150, 20));
         dirPath.setPreferredSize(new Dimension(150, 5));
-        processArea.setPreferredSize(new Dimension(0, 600));
+        processArea.setPreferredSize(new Dimension(0, 1000));
         processArea.setEditable(false);
         pane = new JScrollPane (processArea);
         pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
