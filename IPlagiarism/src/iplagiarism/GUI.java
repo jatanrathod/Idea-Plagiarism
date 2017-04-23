@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -27,7 +28,6 @@ public class GUI extends JFrame {
     private final JLabel dirLabel;
     private final JLabel processLabel;
     private JScrollPane pane;
-
     public GUI() {
         this.processLabel = new JLabel("Process : ");
         this.dirLabel = new JLabel("Enter path of directory : ");
@@ -37,7 +37,6 @@ public class GUI extends JFrame {
         this.checkButton = new JButton("Check");
         this.subPanel = new JPanel();
         this.contentPanel = new JPanel();
-        
     }
 
     public void Display() {
@@ -46,7 +45,7 @@ public class GUI extends JFrame {
         setMaximumSize(new Dimension(999, 200));
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setTitle("Plagiarism Checker");
+        setTitle("JAM Plagiarism Checker");
 
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.PAGE_AXIS));
         contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -81,7 +80,7 @@ public class GUI extends JFrame {
         subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.LINE_AXIS));
         subPanel.add(pane);
         contentPanel.add(subPanel);
-
+        
         subPanel = new JPanel();
         subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.LINE_AXIS));
         subPanel.add(checkButton);
@@ -92,6 +91,7 @@ public class GUI extends JFrame {
 
         EventCB ecb = new EventCB();
         checkButton.addActionListener(ecb);
+             
         setVisible(true);
     }
 
