@@ -51,8 +51,15 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         this.dirPath = path;
     }
 
+    private static void failIfInterrupted() throws InterruptedException {
+        if (Thread.currentThread().isInterrupted()) {
+            throw new InterruptedException("Interrupted while searching files");
+        }
+    }
+
     @Override
     protected Void doInBackground() throws Exception {
+        failIfInterrupted();
         File dir = new File(dirPath);
         if (dir.isDirectory()) {
             File[] files1 = dir.listFiles(new FilenameFilter() {
@@ -196,11 +203,8 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
                 || one.size() != two.size()) {
             return false;
         }
-
-        //to avoid messing the order of the lists we will use a copy
-        //as noted in comments by A. R. S.
-        one = new ArrayList<String>(one);
-        two = new ArrayList<String>(two);
+        one = new ArrayList<>(one);
+        two = new ArrayList<>(two);
 
         Collections.sort(one);
         Collections.sort(two);
