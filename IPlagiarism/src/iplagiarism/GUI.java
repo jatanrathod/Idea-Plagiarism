@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -73,6 +74,7 @@ public class GUI extends JFrame {
         subPanel = new JPanel();
         subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.LINE_AXIS));
         subPanel.add(dirPath);
+        subPanel.add(Box.createRigidArea(new Dimension(5,0)));
         subPanel.add(selectButton);
         contentPanel.add(subPanel);
 
@@ -89,6 +91,7 @@ public class GUI extends JFrame {
         subPanel = new JPanel();
         subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.LINE_AXIS));
         subPanel.add(pbar);
+        subPanel.add(Box.createRigidArea(new Dimension(5,0)));
         subPanel.add(checkButton);
         contentPanel.add(subPanel);
 

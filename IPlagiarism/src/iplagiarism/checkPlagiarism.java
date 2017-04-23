@@ -417,6 +417,6 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
 
     @Override
     protected void done() {
-        JOptionPane.showMessageDialog(null, "Done. See output.txt for More Details.");
+        JOptionPane.showMessageDialog(null, "Done.\n See output.txt for More Details.");
     }
 }
