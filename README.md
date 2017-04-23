@@ -1,6 +1,8 @@
 # Idea-Plagiarism
 A Plagiarism Detector, Which detects the real idea behind the content is plagiarised or not.
-![alt tag](https://github.com/jatanrathod/Idea-Plagiarism/blob/master/main_screen.PNG)
+![Screenshot1](https://github.com/jatanrathod/Idea-Plagiarism/blob/master/first_screen.PNG)
+</br>
+![Screenshot2](https://github.com/jatanrathod/Idea-Plagiarism/blob/master/last_screen.PNG)
 </br>
 The plagiarised content of each file is stored in "output.txt" file, which will generate at project node.
 and past results are stored in "plagiarism_logs.log" file.
