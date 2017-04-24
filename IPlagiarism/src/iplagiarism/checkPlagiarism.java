@@ -92,7 +92,11 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
             publish("Retrieving all Files from directory " + dirPath);
             this.listOfPaths = Arrays.stream(files1234).map(File::getAbsolutePath)
                     .toArray(String[]::new);
-
+            
+            List<String> tList = new ArrayList<>(Arrays.asList(listOfPaths));
+            Collections.sort(tList);
+            listOfPaths = tList.toArray(new String[tList.size()]);
+            
             for (String names : listOfPaths) {
                 publish(getFileName(names));
             }
@@ -137,7 +141,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         s2file2 = extractMainWords(s1file2);
 
         if (equalLists(s2file1, s2file2)) {
-            String print = getFileName(filePath0) + " -> " + getFileName(filePath1)
+            String print = getFileName(filePath0) + " --> " + getFileName(filePath1)
                     + " : " + Double.parseDouble(new DecimalFormat("##.##").format(100))
                     + "%";
             System.out.println(print);
@@ -186,7 +190,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
         System.out.println("found matches considering it's synonyms : " + number_of_words_matched);
 
         /* ***************** Display Result ********************** */
-        String print = getFileName(filePath0) + " -> " + getFileName(filePath1)
+        String print = getFileName(filePath0) + " --> " + getFileName(filePath1)
                 + " : " + Double.parseDouble(new DecimalFormat("##.##").format(((number_of_words_matched) / (total_number_of_words)) * 100))
                 + "%";
         System.out.println(print);
