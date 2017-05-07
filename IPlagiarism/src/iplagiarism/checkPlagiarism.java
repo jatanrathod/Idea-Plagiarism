@@ -92,11 +92,11 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
             publish("Retrieving all Files from directory " + dirPath);
             this.listOfPaths = Arrays.stream(files1234).map(File::getAbsolutePath)
                     .toArray(String[]::new);
-            
+
             List<String> tList = new ArrayList<>(Arrays.asList(listOfPaths));
             Collections.sort(tList);
             listOfPaths = tList.toArray(new String[tList.size()]);
-            
+
             for (String names : listOfPaths) {
                 publish(getFileName(names));
             }
@@ -104,7 +104,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
             if (listOfPaths.length < 2) {
                 JOptionPane.showMessageDialog(null, "Please Enter atleast 2 files to compare.");
             }
-            
+
             int n = listOfPaths.length;
             int x = 0;
             int cnt = 0;
@@ -113,7 +113,7 @@ public class checkPlagiarism extends SwingWorker<Void, String> {
                 for (int j = i + 1; j < this.listOfPaths.length; j++) {
                     check(this.listOfPaths[i], this.listOfPaths[j]);
                     cnt++;
-                    x = (cnt*100)/(n*(n-1)/2);
+                    x = (cnt * 100) / (n * (n - 1) / 2);
                     progress = Integer.toString(x);
                     publish(progress);
                 }
